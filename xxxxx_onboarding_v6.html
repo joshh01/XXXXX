@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>XXXXX</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+  :root {
+    --black: #080808;
+    --card: #141414;
+    --border: #1e1e1e;
+    --border-mid: #2a2a2a;
+    --white: #ffffff;
+    --dim: #777777;
+    --dimmer: #444444;
+    --accent: #C8F135;
+    --accent-dim: #8aab22;
+    --accent-bg: rgba(200,241,53,0.06);
+    --accent-border: rgba(200,241,53,0.18);
+    --user-bg: #181818;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --header-h: 56px;
+  }
+
+  *, *::before, *::after {
+    margin: 0; padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html { height: 100%; height: -webkit-fill-available; }
+
+  body {
+    height: 100vh;
+    height: -webkit-fill-available;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top-line { height: 2px; background: var(--accent); flex-shrink: 0; }
+
+  /* ── HEADER ── */
+  header {
+    height: var(--header-h);
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--black);
+    flex-shrink: 0;
+    z-index: 20;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+  .wordmark {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .phase-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--dimmer);
+    background: var(--card);
+    border: 1px solid var(--border-mid);
+    border-radius: 20px;
+    padding: 3px 8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .api-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--dimmer);
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+  .api-dot.live {
+    background: var(--accent);
+    box-shadow: 0 0 6px rgba(200,241,53,0.4);
+  }
+
+  .api-input {
+    background: var(--card);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    color: var(--dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 9px;
+    width: 130px;
+    outline: none;
+    transition: border-color 0.2s, color 0.2s;
+    -webkit-appearance: none;
+  }
+  .api-input:focus { border-color: var(--accent-dim); color: var(--white); }
+  .api-input::placeholder { color: var(--dimmer); }
+
+  @media (max-width: 400px) {
+    .api-input { width: 100px; font-size: 10px; }
+    .phase-pill { display: none; }
+  }
+
+  .icon-btn {
+    background: none;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    color: var(--dimmer);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    padding: 5px 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .icon-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
+  .icon-btn.success { border-color: var(--accent); color: var(--accent); }
+  .icon-btn svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+  /* ── MESSAGES ── */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .messages::-webkit-scrollbar { width: 3px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+  .messages::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 10px;
+    opacity: 0.3;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .empty-mark {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    color: var(--accent);
+  }
+  .empty-sub { font-size: 12px; color: var(--dim); }
+
+  /* ── MESSAGES ── */
+  .msg {
+    display: flex;
+    gap: 10px;
+    animation: fadeUp 0.3s ease both;
+    max-width: 100%;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.coach { align-items: flex-start; }
+  .msg.user  { flex-direction: row-reverse; align-items: flex-start; }
+
+  .avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+  .coach-av {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
+  }
+  .user-av {
+    background: var(--card);
+    border: 1px solid var(--border-mid);
+    color: var(--dim);
+  }
+
+  .bubble {
+    padding: 12px 15px;
+    border-radius: var(--radius);
+    max-width: calc(100% - 42px);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  @media (min-width: 600px) {
+    .bubble { font-size: 15.5px; padding: 14px 18px; }
+    .messages { padding: 28px 24px 14px; }
+  }
+
+  .msg.coach .bubble {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--white);
+    border-radius: 4px var(--radius) var(--radius) var(--radius);
+  }
+
+  .msg.user .bubble {
+    background: var(--user-bg);
+    border: 1px solid var(--border-mid);
+    color: #cccccc;
+    border-radius: var(--radius) 4px var(--radius) var(--radius);
+    text-align: right;
+  }
+
+  /* ── TYPING ── */
+  .typing-bubble {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px var(--radius) var(--radius) var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .dot {
+    width: 5px; height: 5px;
+    background: var(--dimmer);
+    border-radius: 50%;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+    40%            { opacity: 1;   transform: scale(1.05); }
+  }
+
+  /* ── PROFILE CARD ── */
+  .profile-card {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-top: 4px;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .profile-card h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .profile-section {
+    margin-bottom: 16px;
+  }
+
+  .profile-section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--accent-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-mid);
+  }
+
+  .profile-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+
+  @media (min-width: 500px) {
+    .profile-row { flex-direction: row; gap: 10px; align-items: flex-start; }
+    .profile-key { min-width: 130px; }
+  }
+
+  .profile-key {
+    color: var(--dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .profile-val { color: #cccccc; font-size: 13.5px; line-height: 1.55; }
+
+  .goal-item {
+    background: var(--card);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    font-size: 13.5px;
+    color: #cccccc;
+    line-height: 1.5;
+  }
+
+  .goal-item .goal-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .problem-tag {
+    display: inline-block;
+    background: var(--card);
+    border: 1px solid var(--border-mid);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--dim);
+    margin: 3px 3px 3px 0;
+  }
+
+  /* ── INPUT AREA ── */
+  .input-area {
+    padding: 12px 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--black);
+    flex-shrink: 0;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  textarea {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 12px 14px;
+    resize: none;
+    outline: none;
+    min-height: 48px;
+    max-height: 120px;
+    overflow-y: auto;
+    -webkit-appearance: none;
+    transition: border-color 0.2s;
+    -webkit-overflow-scrolling: touch;
+  }
+  textarea:focus { border-color: var(--border-mid); }
+  textarea::placeholder { color: var(--dimmer); }
+
+  .send-btn {
+    width: 48px; height: 48px;
+    min-width: 48px;
+    border-radius: var(--radius);
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .send-btn:hover { opacity: 0.88; }
+  .send-btn:active { transform: scale(0.93); }
+  .send-btn:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
+  .send-btn svg { width: 18px; height: 18px; pointer-events: none; }
+
+  .hint {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--dimmer);
+    font-family: 'DM Mono', monospace;
+    text-align: center;
+  }
+  @media (max-width: 360px) { .hint { display: none; } }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--accent);
+    color: #080808;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 100;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+</style>
+</head>
+<body>
+
+<div class="top-line"></div>
+<div class="toast" id="toast"></div>
+
+<header>
+  <div class="header-left">
+    <span class="wordmark">XXXXX</span>
+    <span class="phase-pill" id="phase-label">Onboarding</span>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" id="export-btn" onclick="exportChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Export
+    </button>
+    <button class="icon-btn" onclick="resetConversation()">Reset</button>
+    <div class="api-dot" id="api-dot"></div>
+    <input
+      class="api-input"
+      id="api-key"
+      type="password"
+      placeholder="API key"
+      autocomplete="off"
+      oninput="checkKey()"
+    />
+  </div>
+</header>
+
+<div class="messages" id="messages">
+  <div class="empty" id="empty-state">
+    <div class="empty-mark">XXXXX</div>
+    <div class="empty-sub">Enter your API key to begin</div>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-row">
+    <textarea
+      id="input"
+      placeholder="Type your response..."
+      rows="1"
+      disabled
+      onkeydown="handleKey(event)"
+      oninput="autoResize(this)"
+    ></textarea>
+    <button class="send-btn" id="send-btn" onclick="send()" disabled aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#080808" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="19" x2="12" y2="5"/>
+        <polyline points="5 12 12 5 19 12"/>
+      </svg>
+    </button>
+  </div>
+  <div class="hint" id="hint">Enter API key to begin</div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are an accountability coach running a deep onboarding conversation. Your goal is to build a complete picture of who this person is right now, who they want to become, and what is standing between those two realities.
+
+This is not a single-goal intake. You are building a full life picture — multiple goals, multiple problem areas, the identity they are reaching toward, and the specific blockers keeping them where they are.
+
+YOU ARE BUILDING A PROFILE WITH THESE COMPONENTS — find them naturally, never name them to the user:
+
+GOALS (multiple):
+- Primary goal: the one that changes everything if achieved
+- Supporting goals: things that enable the primary or represent who they're becoming
+- Identity goals: things that aren't about achievement but about who they want to be (habits, values, character)
+
+CURRENT REALITY:
+- What their life actually looks like day to day
+- Problem areas they know about — not prompted with a list, asked openly
+- The gap between their current self and their desired self
+
+DIAGNOSTIC:
+- Root blocker: the real environmental, situational, or identity reason they aren't moving
+- Failure pattern: the specific mechanism by which they've broken down before
+- Peak moment: a specific time they felt locked in and alive — how it felt, not just what they did
+- Keystone: the one area that if fixed first would create the most downstream improvement
+
+CONVERSATION STRUCTURE — follow this flow but stay conversational, not clinical:
+
+PHASE 1 — OPENING (2-3 exchanges)
+Start with: what are they trying to change, real version. Then: what does their life actually look like right now. Move fast. Establish the current reality quickly.
+
+PHASE 2 — FULL PICTURE (3-4 exchanges)
+Ask about ALL goals — not just one. "Beyond that — what else are you trying to build or become? Could be anything — health, relationships, habits, finances, who you want to be." Let them list freely. Then ask what isn't working in their life right now, open ended. "Outside of your goals — what areas of your life do you know aren't where they should be?" No prompting, no categories. What they mention and what they leave out is diagnostic.
+
+PHASE 3 — DIAGNOSIS (3-4 exchanges)
+Find the peak moment. Find the failure pattern. Find the root blocker. Connect the goals to a single identity shift — the thread that runs through all of them. "These aren't separate goals — they're all pointing at the same thing. What do you think that is?"
+
+PHASE 4 — MIRROR
+Reflect back the full picture. Use their exact words. Connect their goals, their problem areas, their peak moment, and their blocker into one clear narrative. Name the identity they're reaching toward. Name what's actually in the way.
+End with: "Does that land?"
+
+PHASE 5 — COMMIT
+"Of everything we've covered — what's the one thing you could do tomorrow that would tell you this is real?"
+Push once if vague: "More specific — what exactly, and at what time?"
+Accept the second answer.
+
+CRITICAL RULES:
+
+ONE QUESTION PER MESSAGE. Always. Short. Stop.
+
+NO ASSUMPTIONS. Never state something as fact unless they said it. Infer by asking, not stating.
+
+NO CHECKLIST. Never suggest categories of problems or goals. Ask open questions and let them surface what matters to them. What they volunteer is the real data.
+
+THREAD VALUE. After 2 exchanges on any topic — is this revealing blocker, identity, pattern, or goals? If not, cut and move. Low value: minor logistics, small habits. High value: specific failures, what success feels like, who they admire, peak moments.
+
+CIRCLES. If vague answers repeat twice — pivot. "Let's come at this differently." Never press the same point more than twice.
+
+NO THERAPY. Don't dig into childhood or deep trauma unless it directly connects to a concrete present blocker. Cut psychological threads that aren't actionable.
+
+VAGUE WORDS — PRESS ONCE. Lazy, motivation, comfortable, I guess. Press once. If still vague — move on.
+
+CONTRADICTIONS — NAME ONCE. Call it, once, directly. Move on if unresolved.
+
+EMOTIONAL LAYER — HIGH VALUE ONLY. On peak moments, specific failures, identity gaps — ask how it felt. Not on every exchange.
+
+EFFICIENCY. 14-18 exchanges maximum. At exchange 16 — move to mirror.
+
+FORBIDDEN: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense, good point.
+
+NEVER identify as AI or system.
+
+TONE: Direct, calm, efficient. Respects the person's time. Not unkind but not soft. 2-3 sentences max until the mirror.
+
+NO ADVICE OR SOLUTIONS until the mirror and commit.
+
+OPENING LINE — use exactly:
+"Before we set any goals or build any plans — tell me what you're actually trying to change. Not the version you'd tell someone to sound good. The real one."
+
+OUTPUT — after the commit, output this block:
+
+---PROFILE---
+PRIMARY_GOAL: [the goal that changes everything]
+SUPPORTING_GOALS: [other goals mentioned, comma separated]
+IDENTITY_TARGET: [the person they are becoming — one sentence]
+PROBLEM_AREAS: [what they said isn't working, comma separated, their words]
+ROOT_CAUSE: [actual environmental or situational blocker]
+FAILURE_PATTERN: [specific mechanism of breakdown]
+IDENTITY_GAP: [who they are vs who they want to be]
+PEAK_MOMENT: [specific time they felt locked in — their exact words]
+KEYSTONE: [one area to fix first and why]
+FIRST_ACTION: [their specific commit]
+TONE: [direct / steady / encouraging]
+---END---`;
+
+let history = [];
+let loading = false;
+let started = false;
+let exchangeCount = 0;
+
+// ── KEY CHECK ──
+function checkKey() {
+  const key = document.getElementById('api-key').value.trim();
+  const dot = document.getElementById('api-dot');
+  const input = document.getElementById('input');
+  const btn = document.getElementById('send-btn');
+  const hint = document.getElementById('hint');
+
+  if (key.startsWith('sk-ant-') && key.length > 20) {
+    dot.classList.add('live');
+    if (!started) {
+      input.disabled = false;
+      btn.disabled = false;
+      hint.textContent = 'Enter to send · Shift+Enter for new line';
+      document.getElementById('empty-state')?.remove();
+      startConversation();
+    }
+  } else {
+    dot.classList.remove('live');
+    if (!started) {
+      input.disabled = true;
+      btn.disabled = true;
+      hint.textContent = 'Enter API key to begin';
+    }
+  }
+}
+
+async function startConversation() {
+  started = true;
+  await getCoachResponse();
+}
+
+// ── INPUT ──
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (!loading) send();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// ── RENDER ──
+function appendMessage(role, content) {
+  document.getElementById('empty-state')?.remove();
+  const messages = document.getElementById('messages');
+
+  const msg = document.createElement('div');
+  msg.className = `msg ${role}`;
+
+  const av = document.createElement('div');
+  av.className = `avatar ${role === 'coach' ? 'coach-av' : 'user-av'}`;
+  av.textContent = role === 'coach' ? 'XX' : 'YOU';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = content;
+
+  msg.appendChild(av);
+  msg.appendChild(bubble);
+  messages.appendChild(msg);
+  scrollBottom();
+}
+
+function scrollBottom() {
+  const m = document.getElementById('messages');
+  m.scrollTop = m.scrollHeight;
+}
+
+function showTyping() {
+  const messages = document.getElementById('messages');
+  const msg = document.createElement('div');
+  msg.className = 'msg coach';
+  msg.id = 'typing';
+
+  const av = document.createElement('div');
+  av.className = 'avatar coach-av';
+  av.textContent = 'XX';
+
+  const b = document.createElement('div');
+  b.className = 'typing-bubble';
+  b.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+
+  msg.appendChild(av);
+  msg.appendChild(b);
+  messages.appendChild(msg);
+  scrollBottom();
+}
+
+function removeTyping() {
+  document.getElementById('typing')?.remove();
+}
+
+// ── PROFILE CARD ──
+function buildProfileCard(raw) {
+  const fields = {};
+  raw.split('\n').forEach(line => {
+    const idx = line.indexOf(':');
+    if (idx > -1) {
+      const key = line.slice(0, idx).trim();
+      const val = line.slice(idx + 1).trim();
+      if (key && val) fields[key] = val;
+    }
+  });
+
+  const card = document.createElement('div');
+  card.className = 'profile-card';
+  card.id = 'profile-card';
+
+  const title = document.createElement('h3');
+  title.textContent = 'Coaching profile';
+  card.appendChild(title);
+
+  // Identity target — big statement
+  if (fields.IDENTITY_TARGET) {
+    const identSection = document.createElement('div');
+    identSection.className = 'profile-section';
+    const t = document.createElement('div');
+    t.className = 'profile-section-title';
+    t.textContent = 'Identity target';
+    const v = document.createElement('div');
+    v.style.cssText = 'font-size:15px;color:#fff;line-height:1.6;font-style:italic;padding:8px 0;';
+    v.textContent = '"' + fields.IDENTITY_TARGET + '"';
+    identSection.appendChild(t);
+    identSection.appendChild(v);
+    card.appendChild(identSection);
+  }
+
+  // Goals section
+  const goalsSection = document.createElement('div');
+  goalsSection.className = 'profile-section';
+  const goalsTitle = document.createElement('div');
+  goalsTitle.className = 'profile-section-title';
+  goalsTitle.textContent = 'Goals';
+  goalsSection.appendChild(goalsTitle);
+
+  if (fields.PRIMARY_GOAL) {
+    const g = document.createElement('div');
+    g.className = 'goal-item';
+    const t = document.createElement('div');
+    t.className = 'goal-type';
+    t.textContent = 'Primary';
+    g.appendChild(t);
+    g.appendChild(document.createTextNode(fields.PRIMARY_GOAL));
+    goalsSection.appendChild(g);
+  }
+
+  if (fields.SUPPORTING_GOALS) {
+    fields.SUPPORTING_GOALS.split(',').forEach(goal => {
+      const g = document.createElement('div');
+      g.className = 'goal-item';
+      const t = document.createElement('div');
+      t.className = 'goal-type';
+      t.textContent = 'Supporting';
+      g.appendChild(t);
+      g.appendChild(document.createTextNode(goal.trim()));
+      goalsSection.appendChild(g);
+    });
+  }
+  card.appendChild(goalsSection);
+
+  // Problem areas
+  if (fields.PROBLEM_AREAS) {
+    const probSection = document.createElement('div');
+    probSection.className = 'profile-section';
+    const t = document.createElement('div');
+    t.className = 'profile-section-title';
+    t.textContent = 'Problem areas identified';
+    probSection.appendChild(t);
+    const tags = document.createElement('div');
+    tags.style.marginTop = '4px';
+    fields.PROBLEM_AREAS.split(',').forEach(p => {
+      const tag = document.createElement('span');
+      tag.className = 'problem-tag';
+      tag.textContent = p.trim();
+      tags.appendChild(tag);
+    });
+    probSection.appendChild(tags);
+    card.appendChild(probSection);
+  }
+
+  // Diagnosis section
+  const diagSection = document.createElement('div');
+  diagSection.className = 'profile-section';
+  const diagTitle = document.createElement('div');
+  diagTitle.className = 'profile-section-title';
+  diagTitle.textContent = 'Diagnosis';
+  diagSection.appendChild(diagTitle);
+
+  const diagFields = [
+    ['ROOT_CAUSE',       'Root cause'],
+    ['FAILURE_PATTERN',  'Failure pattern'],
+    ['IDENTITY_GAP',     'Identity gap'],
+    ['PEAK_MOMENT',      'Peak moment'],
+    ['KEYSTONE',         'First target'],
+  ];
+
+  diagFields.forEach(([key, label]) => {
+    if (!fields[key]) return;
+    const row = document.createElement('div');
+    row.className = 'profile-row';
+    row.innerHTML = `<span class="profile-key">${label}</span><span class="profile-val">${fields[key]}</span>`;
+    diagSection.appendChild(row);
+  });
+  card.appendChild(diagSection);
+
+  // Commit
+  if (fields.FIRST_ACTION) {
+    const commitSection = document.createElement('div');
+    commitSection.className = 'profile-section';
+    const t = document.createElement('div');
+    t.className = 'profile-section-title';
+    t.textContent = 'First commitment';
+    commitSection.appendChild(t);
+    const v = document.createElement('div');
+    v.style.cssText = 'font-size:14px;color:#C8F135;line-height:1.6;padding-top:4px;';
+    v.textContent = fields.FIRST_ACTION;
+    commitSection.appendChild(v);
+    card.appendChild(commitSection);
+  }
+
+  // Tone
+  if (fields.TONE) {
+    const row = document.createElement('div');
+    row.className = 'profile-row';
+    row.style.marginTop = '4px';
+    row.innerHTML = `<span class="profile-key">Coaching tone</span><span class="profile-val">${fields.TONE}</span>`;
+    card.appendChild(row);
+  }
+
+  return card;
+}
+
+function extractAndShowProfile(text) {
+  const match = text.match(/---PROFILE---([\s\S]*?)---END---/);
+  if (!match) return text;
+
+  const raw = match[1].trim();
+  const clean = text.replace(/---PROFILE---([\s\S]*?)---END---/, '').trim();
+
+  const card = buildProfileCard(raw);
+  document.getElementById('messages').appendChild(card);
+  scrollBottom();
+  document.getElementById('phase-label').textContent = 'Profile built';
+
+  return clean;
+}
+
+// ── API CALL ──
+async function getCoachResponse(userMessage = null) {
+  const key = document.getElementById('api-key').value.trim();
+  if (!key) return;
+
+  if (userMessage) {
+    history.push({ role: 'user', content: userMessage });
+    exchangeCount++;
+  }
+
+  setLoading(true);
+  showTyping();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: SYSTEM_PROMPT,
+        messages: history.length > 0 ? history : [
+          { role: 'user', content: 'Begin the onboarding.' }
+        ]
+      })
+    });
+
+    const data = await res.json();
+    removeTyping();
+
+    if (data.error) {
+      appendMessage('coach', 'Error: ' + data.error.message);
+      setLoading(false);
+      return;
+    }
+
+    let reply = data.content[0].text;
+
+    if (reply.includes('---PROFILE---')) {
+      const cleaned = extractAndShowProfile(reply);
+      if (cleaned) appendMessage('coach', cleaned);
+    } else {
+      appendMessage('coach', reply);
+    }
+
+    history.push({ role: 'assistant', content: reply });
+
+  } catch (err) {
+    removeTyping();
+    appendMessage('coach', 'Connection error. Check your API key and try again.');
+  }
+
+  setLoading(false);
+}
+
+// ── SEND ──
+async function send() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text || loading) return;
+  input.value = '';
+  input.style.height = 'auto';
+  appendMessage('user', text);
+  await getCoachResponse(text);
+}
+
+// ── LOADING — only disables send button ──
+function setLoading(val) {
+  loading = val;
+  document.getElementById('send-btn').disabled = val;
+}
+
+// ── EXPORT ──
+function exportChat() {
+  if (history.length === 0) {
+    showToast('Nothing to export yet');
+    return;
+  }
+
+  const lines = [];
+  lines.push('XXXXX — Onboarding Session');
+  lines.push('Exported: ' + new Date().toLocaleString());
+  lines.push('='.repeat(44));
+  lines.push('');
+
+  history.forEach(msg => {
+    const role = msg.role === 'assistant' ? 'COACH' : 'YOU';
+    const content = msg.content.replace(/---PROFILE---([\s\S]*?)---END---/, '').trim();
+    if (content) {
+      lines.push(role + ':');
+      lines.push(content);
+      lines.push('');
+    }
+  });
+
+  // Profile block
+  const card = document.getElementById('profile-card');
+  if (card) {
+    lines.push('='.repeat(44));
+    lines.push('COACHING PROFILE');
+    lines.push('');
+    card.querySelectorAll('.goal-item').forEach(g => {
+      const type = g.querySelector('.goal-type')?.textContent || '';
+      const val = g.childNodes[g.childNodes.length - 1]?.textContent?.trim() || '';
+      if (val) lines.push(type.toUpperCase() + ' GOAL: ' + val);
+    });
+    card.querySelectorAll('.profile-row').forEach(row => {
+      const k = row.querySelector('.profile-key')?.textContent || '';
+      const v = row.querySelector('.profile-val')?.textContent || '';
+      if (k && v) lines.push(k.toUpperCase() + ': ' + v);
+    });
+    const commit = card.querySelector('[style*="C8F135"]');
+    if (commit) lines.push('FIRST ACTION: ' + commit.textContent);
+  }
+
+  const text = lines.join('\n');
+
+  if (navigator.share) {
+    navigator.share({ title: 'XXXXX Onboarding', text })
+      .catch(() => copyToClipboard(text));
+  } else {
+    copyToClipboard(text);
+  }
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Copied to clipboard');
+      const btn = document.getElementById('export-btn');
+      btn.classList.add('success');
+      setTimeout(() => btn.classList.remove('success'), 2000);
+    }).catch(() => downloadTxt(text));
+  } else {
+    downloadTxt(text);
+  }
+}
+
+function downloadTxt(text) {
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+  a.download = 'xxxxx-session-' + Date.now() + '.txt';
+  a.click();
+  showToast('Downloaded');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── RESET ──
+function resetConversation() {
+  history = [];
+  started = false;
+  exchangeCount = 0;
+  document.getElementById('messages').innerHTML = `
+    <div class="empty" id="empty-state">
+      <div class="empty-mark">XXXXX</div>
+      <div class="empty-sub">Enter your API key to begin</div>
+    </div>`;
+  document.getElementById('phase-label').textContent = 'Onboarding';
+  document.getElementById('input').value = '';
+  document.getElementById('input').style.height = 'auto';
+  checkKey();
+}
+
+// ── MOBILE KEYBOARD SCROLL FIX ──
+document.getElementById('input').addEventListener('focus', () => {
+  setTimeout(scrollBottom, 350);
+});
+</script>
+</body>
+</html>
