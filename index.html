@@ -25,431 +25,175 @@
     --header-h: 56px;
   }
 
-  *, *::before, *::after {
-    margin: 0; padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  html { height: 100%; height: -webkit-fill-available; }
-
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { height:100%; height:-webkit-fill-available; }
   body {
-    height: 100vh;
-    height: -webkit-fill-available;
-    background: var(--black);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    line-height: 1.65;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    height:100vh; height:-webkit-fill-available;
+    background:var(--black); color:var(--white);
+    font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.65;
+    overflow:hidden; display:flex; flex-direction:column;
   }
 
-  .top-line { height: 2px; background: var(--accent); flex-shrink: 0; }
+  .top-line { height:2px; background:var(--accent); flex-shrink:0; }
 
-  /* ── HEADER ── */
   header {
-    height: var(--header-h);
-    padding: 0 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    background: var(--black);
-    flex-shrink: 0;
-    z-index: 20;
+    height:var(--header-h); padding:0 16px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    background:var(--black); flex-shrink:0; z-index:20;
   }
-
-  .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
-
-  .wordmark {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 4px;
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-
+  .header-left { display:flex; align-items:center; gap:10px; min-width:0; }
+  .wordmark { font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:4px; color:var(--accent); flex-shrink:0; }
   .phase-pill {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    color: var(--dimmer);
-    background: var(--card);
-    border: 1px solid var(--border-mid);
-    border-radius: 20px;
-    padding: 3px 8px;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 120px;
+    font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px;
+    color:var(--dimmer); background:var(--card); border:1px solid var(--border-mid);
+    border-radius:20px; padding:3px 8px; text-transform:uppercase;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px;
   }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  .api-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--dimmer);
-    transition: background 0.3s;
-    flex-shrink: 0;
-  }
-  .api-dot.live {
-    background: var(--accent);
-    box-shadow: 0 0 6px rgba(200,241,53,0.4);
-  }
-
+  .header-right { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .api-dot { width:7px; height:7px; border-radius:50%; background:var(--dimmer); transition:background 0.3s; flex-shrink:0; }
+  .api-dot.live { background:var(--accent); box-shadow:0 0 6px rgba(200,241,53,0.4); }
   .api-input {
-    background: var(--card);
-    border: 1px solid var(--border-mid);
-    border-radius: var(--radius-sm);
-    color: var(--dim);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    padding: 6px 9px;
-    width: 130px;
-    outline: none;
-    transition: border-color 0.2s, color 0.2s;
-    -webkit-appearance: none;
+    background:var(--card); border:1px solid var(--border-mid); border-radius:var(--radius-sm);
+    color:var(--dim); font-family:'DM Mono',monospace; font-size:11px;
+    padding:6px 9px; width:130px; outline:none; -webkit-appearance:none;
+    transition:border-color 0.2s,color 0.2s;
   }
-  .api-input:focus { border-color: var(--accent-dim); color: var(--white); }
-  .api-input::placeholder { color: var(--dimmer); }
-
-  @media (max-width: 400px) {
-    .api-input { width: 100px; font-size: 10px; }
-    .phase-pill { display: none; }
-  }
+  .api-input:focus { border-color:var(--accent-dim); color:var(--white); }
+  .api-input::placeholder { color:var(--dimmer); }
+  @media(max-width:400px){ .api-input{width:95px;font-size:10px;} .phase-pill{display:none;} }
 
   .icon-btn {
-    background: none;
-    border: 1px solid var(--border-mid);
-    border-radius: var(--radius-sm);
-    color: var(--dimmer);
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    padding: 5px 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    transition: border-color 0.2s, color 0.2s;
-    white-space: nowrap;
-    flex-shrink: 0;
+    background:none; border:1px solid var(--border-mid); border-radius:var(--radius-sm);
+    color:var(--dimmer); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.5px;
+    padding:5px 8px; cursor:pointer; display:flex; align-items:center; gap:4px;
+    transition:border-color 0.2s,color 0.2s; white-space:nowrap; flex-shrink:0;
   }
-  .icon-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
-  .icon-btn.success { border-color: var(--accent); color: var(--accent); }
-  .icon-btn svg { width: 11px; height: 11px; flex-shrink: 0; }
+  .icon-btn:hover { border-color:var(--accent-dim); color:var(--accent); }
+  .icon-btn.success { border-color:var(--accent); color:var(--accent); }
+  .icon-btn svg { width:11px; height:11px; flex-shrink:0; }
 
-  /* ── MESSAGES ── */
   .messages {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 24px 16px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
+    flex:1; overflow-y:auto; overflow-x:hidden;
+    padding:24px 16px 12px;
+    display:flex; flex-direction:column; gap:18px;
+    -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
   }
+  .messages::-webkit-scrollbar { width:3px; }
+  .messages::-webkit-scrollbar-track { background:transparent; }
+  .messages::-webkit-scrollbar-thumb { background:var(--border-mid); border-radius:2px; }
 
-  .messages::-webkit-scrollbar { width: 3px; }
-  .messages::-webkit-scrollbar-track { background: transparent; }
-  .messages::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
-
-  /* ── EMPTY STATE ── */
   .empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    gap: 10px;
-    opacity: 0.3;
-    padding: 40px 20px;
-    text-align: center;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    flex:1; gap:10px; opacity:0.3; padding:40px 20px; text-align:center;
   }
-  .empty-mark {
-    font-family: 'DM Mono', monospace;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: 6px;
-    color: var(--accent);
-  }
-  .empty-sub { font-size: 12px; color: var(--dim); }
+  .empty-mark { font-family:'DM Mono',monospace; font-size:22px; font-weight:500; letter-spacing:6px; color:var(--accent); }
+  .empty-sub { font-size:12px; color:var(--dim); }
 
-  /* ── MESSAGES ── */
-  .msg {
-    display: flex;
-    gap: 10px;
-    animation: fadeUp 0.3s ease both;
-    max-width: 100%;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .msg.coach { align-items: flex-start; }
-  .msg.user  { flex-direction: row-reverse; align-items: flex-start; }
+  .msg { display:flex; gap:10px; animation:fadeUp 0.3s ease both; max-width:100%; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg.coach { align-items:flex-start; }
+  .msg.user  { flex-direction:row-reverse; align-items:flex-start; }
 
   .avatar {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 8px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    margin-top: 4px;
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'DM Mono',monospace; font-size:8px; font-weight:500; letter-spacing:0.5px; margin-top:4px;
   }
-  .coach-av {
-    background: var(--accent-bg);
-    border: 1px solid var(--accent-border);
-    color: var(--accent);
-  }
-  .user-av {
-    background: var(--card);
-    border: 1px solid var(--border-mid);
-    color: var(--dim);
-  }
+  .coach-av { background:var(--accent-bg); border:1px solid var(--accent-border); color:var(--accent); }
+  .user-av  { background:var(--card); border:1px solid var(--border-mid); color:var(--dim); }
 
   .bubble {
-    padding: 12px 15px;
-    border-radius: var(--radius);
-    max-width: calc(100% - 42px);
-    font-size: 15px;
-    line-height: 1.65;
+    padding:12px 15px; border-radius:var(--radius);
+    max-width:calc(100% - 42px); font-size:15px; line-height:1.65;
   }
+  @media(min-width:600px){ .bubble{font-size:15.5px;padding:14px 18px;} .messages{padding:28px 24px 14px;} }
+  .msg.coach .bubble { background:var(--card); border:1px solid var(--border); color:var(--white); border-radius:4px var(--radius) var(--radius) var(--radius); }
+  .msg.user  .bubble { background:var(--user-bg); border:1px solid var(--border-mid); color:#cccccc; border-radius:var(--radius) 4px var(--radius) var(--radius); text-align:right; }
 
-  @media (min-width: 600px) {
-    .bubble { font-size: 15.5px; padding: 14px 18px; }
-    .messages { padding: 28px 24px 14px; }
-  }
-
-  .msg.coach .bubble {
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--white);
-    border-radius: 4px var(--radius) var(--radius) var(--radius);
-  }
-
-  .msg.user .bubble {
-    background: var(--user-bg);
-    border: 1px solid var(--border-mid);
-    color: #cccccc;
-    border-radius: var(--radius) 4px var(--radius) var(--radius);
-    text-align: right;
-  }
-
-  /* ── TYPING ── */
-  .typing-bubble {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px var(--radius) var(--radius) var(--radius);
-    padding: 14px 16px;
-    display: flex;
-    gap: 5px;
-    align-items: center;
-  }
-  .dot {
-    width: 5px; height: 5px;
-    background: var(--dimmer);
-    border-radius: 50%;
-    animation: blink 1.2s ease-in-out infinite;
-  }
-  .dot:nth-child(2) { animation-delay: 0.2s; }
-  .dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes blink {
-    0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
-    40%            { opacity: 1;   transform: scale(1.05); }
-  }
+  .typing-bubble { background:var(--card); border:1px solid var(--border); border-radius:4px var(--radius) var(--radius) var(--radius); padding:14px 16px; display:flex; gap:5px; align-items:center; }
+  .dot { width:5px; height:5px; background:var(--dimmer); border-radius:50%; animation:blink 1.2s ease-in-out infinite; }
+  .dot:nth-child(2){animation-delay:0.2s} .dot:nth-child(3){animation-delay:0.4s}
+  @keyframes blink { 0%,80%,100%{opacity:0.3;transform:scale(0.85)} 40%{opacity:1;transform:scale(1.05)} }
 
   /* ── PROFILE CARD ── */
   .profile-card {
-    background: var(--accent-bg);
-    border: 1px solid var(--accent-border);
-    border-radius: var(--radius);
-    padding: 18px;
-    margin-top: 4px;
-    animation: fadeUp 0.4s ease both;
+    background:var(--accent-bg); border:1px solid var(--accent-border);
+    border-radius:var(--radius); padding:18px; margin-top:4px;
+    animation:fadeUp 0.4s ease both;
   }
+  .profile-card h3 { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--accent); text-transform:uppercase; margin-bottom:16px; }
+  .profile-section { margin-bottom:16px; }
+  .profile-section:last-child { margin-bottom:0; }
+  .section-title { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:2px; color:var(--accent-dim); text-transform:uppercase; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--border-mid); }
+  .profile-row { display:flex; flex-direction:column; gap:2px; margin-bottom:10px; }
+  @media(min-width:500px){ .profile-row{flex-direction:row;gap:10px;align-items:flex-start;} .profile-key{min-width:130px;} }
+  .profile-key { color:var(--dim); font-family:'DM Mono',monospace; font-size:10px; flex-shrink:0; padding-top:1px; }
+  .profile-val { color:#cccccc; font-size:13.5px; line-height:1.55; }
 
-  .profile-card h3 {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 16px;
+  .identity-statement { font-size:15px; color:#fff; line-height:1.6; font-style:italic; padding:8px 0; }
+
+  .goal-item { background:var(--card); border:1px solid var(--border-mid); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:6px; font-size:13.5px; color:#cccccc; line-height:1.5; }
+  .goal-type { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1.5px; color:var(--accent); text-transform:uppercase; margin-bottom:4px; }
+
+  .problem-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .problem-tag { background:var(--card); border:1px solid var(--border-mid); border-radius:20px; padding:4px 10px; font-size:12px; color:var(--dim); }
+
+  /* ── LADDER ── */
+  .ladder-card {
+    background:var(--black); border:1px solid var(--border-mid);
+    border-radius:var(--radius); padding:18px; margin-top:8px;
+    animation:fadeUp 0.5s ease both;
   }
+  .ladder-card h3 { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--accent); text-transform:uppercase; margin-bottom:6px; }
+  .ladder-subtitle { font-size:12px; color:var(--dim); margin-bottom:16px; line-height:1.5; }
 
-  .profile-section {
-    margin-bottom: 16px;
+  .ladder-step {
+    display:flex; gap:12px; align-items:flex-start;
+    padding:12px 0; border-bottom:1px solid var(--border);
   }
+  .ladder-step:last-child { border-bottom:none; padding-bottom:0; }
 
-  .profile-section-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 2px;
-    color: var(--accent-dim);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border-mid);
+  .step-num {
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:500;
+    margin-top:1px;
   }
+  .step-num.active { background:var(--accent); color:#080808; }
+  .step-num.upcoming { background:var(--card); border:1px solid var(--border-mid); color:var(--dimmer); }
 
-  .profile-row {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-bottom: 10px;
-  }
+  .step-content { flex:1; }
+  .step-title { font-size:14px; font-weight:500; color:var(--white); margin-bottom:3px; line-height:1.4; }
+  .step-title.active { color:var(--accent); }
+  .step-why { font-size:12.5px; color:var(--dim); line-height:1.5; }
+  .step-timeframe { font-family:'DM Mono',monospace; font-size:10px; color:var(--dimmer); margin-top:4px; letter-spacing:0.5px; }
 
-  @media (min-width: 500px) {
-    .profile-row { flex-direction: row; gap: 10px; align-items: flex-start; }
-    .profile-key { min-width: 130px; }
-  }
-
-  .profile-key {
-    color: var(--dim);
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    flex-shrink: 0;
-    padding-top: 1px;
-  }
-  .profile-val { color: #cccccc; font-size: 13.5px; line-height: 1.55; }
-
-  .goal-item {
-    background: var(--card);
-    border: 1px solid var(--border-mid);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    margin-bottom: 6px;
-    font-size: 13.5px;
-    color: #cccccc;
-    line-height: 1.5;
-  }
-
-  .goal-item .goal-type {
-    font-family: 'DM Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1.5px;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .problem-tag {
-    display: inline-block;
-    background: var(--card);
-    border: 1px solid var(--border-mid);
-    border-radius: 20px;
-    padding: 4px 10px;
-    font-size: 12px;
-    color: var(--dim);
-    margin: 3px 3px 3px 0;
-  }
-
-  /* ── INPUT AREA ── */
-  .input-area {
-    padding: 12px 16px;
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
-    border-top: 1px solid var(--border);
-    background: var(--black);
-    flex-shrink: 0;
-  }
-
-  .input-row {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-  }
-
+  /* ── INPUT ── */
+  .input-area { padding:12px 16px; padding-bottom:max(16px,env(safe-area-inset-bottom)); border-top:1px solid var(--border); background:var(--black); flex-shrink:0; }
+  .input-row { display:flex; gap:10px; align-items:flex-end; }
   textarea {
-    flex: 1;
-    background: var(--card);
-    border: 1px solid var(--border-mid);
-    border-radius: var(--radius);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    padding: 12px 14px;
-    resize: none;
-    outline: none;
-    min-height: 48px;
-    max-height: 120px;
-    overflow-y: auto;
-    -webkit-appearance: none;
-    transition: border-color 0.2s;
-    -webkit-overflow-scrolling: touch;
+    flex:1; background:var(--card); border:1px solid var(--border-mid); border-radius:var(--radius);
+    color:var(--white); font-family:'DM Sans',sans-serif; font-size:16px; line-height:1.5;
+    padding:12px 14px; resize:none; outline:none; min-height:48px; max-height:120px;
+    overflow-y:auto; -webkit-appearance:none; -webkit-overflow-scrolling:touch; transition:border-color 0.2s;
   }
-  textarea:focus { border-color: var(--border-mid); }
-  textarea::placeholder { color: var(--dimmer); }
+  textarea::placeholder { color:var(--dimmer); }
+  .send-btn { width:48px; height:48px; min-width:48px; border-radius:var(--radius); background:var(--accent); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.15s,transform 0.1s; }
+  .send-btn:hover{opacity:0.88} .send-btn:active{transform:scale(0.93)} .send-btn:disabled{opacity:0.25;cursor:not-allowed;transform:none}
+  .send-btn svg { width:18px; height:18px; pointer-events:none; }
+  .hint { margin-top:8px; font-size:11px; color:var(--dimmer); font-family:'DM Mono',monospace; text-align:center; }
+  @media(max-width:360px){.hint{display:none}}
 
-  .send-btn {
-    width: 48px; height: 48px;
-    min-width: 48px;
-    border-radius: var(--radius);
-    background: var(--accent);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.15s, transform 0.1s;
-  }
-  .send-btn:hover { opacity: 0.88; }
-  .send-btn:active { transform: scale(0.93); }
-  .send-btn:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
-  .send-btn svg { width: 18px; height: 18px; pointer-events: none; }
-
-  .hint {
-    margin-top: 8px;
-    font-size: 11px;
-    color: var(--dimmer);
-    font-family: 'DM Mono', monospace;
-    text-align: center;
-  }
-  @media (max-width: 360px) { .hint { display: none; } }
-
-  /* ── TOAST ── */
   .toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: var(--accent);
-    color: #080808;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
-    pointer-events: none;
-    z-index: 100;
-    white-space: nowrap;
+    position:fixed; bottom:90px; left:50%;
+    transform:translateX(-50%) translateY(10px);
+    background:var(--accent); color:#080808;
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:1px;
+    padding:8px 16px; border-radius:20px; opacity:0;
+    transition:opacity 0.2s,transform 0.2s; pointer-events:none; z-index:100; white-space:nowrap;
   }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -473,14 +217,7 @@
     </button>
     <button class="icon-btn" onclick="resetConversation()">Reset</button>
     <div class="api-dot" id="api-dot"></div>
-    <input
-      class="api-input"
-      id="api-key"
-      type="password"
-      placeholder="API key"
-      autocomplete="off"
-      oninput="checkKey()"
-    />
+    <input class="api-input" id="api-key" type="password" placeholder="API key" autocomplete="off" oninput="checkKey()"/>
   </div>
 </header>
 
@@ -493,14 +230,7 @@
 
 <div class="input-area">
   <div class="input-row">
-    <textarea
-      id="input"
-      placeholder="Type your response..."
-      rows="1"
-      disabled
-      onkeydown="handleKey(event)"
-      oninput="autoResize(this)"
-    ></textarea>
+    <textarea id="input" placeholder="Type your response..." rows="1" disabled onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
     <button class="send-btn" id="send-btn" onclick="send()" disabled aria-label="Send">
       <svg viewBox="0 0 24 24" fill="none" stroke="#080808" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="12" y1="19" x2="12" y2="5"/>
@@ -514,101 +244,129 @@
 <script>
 const SYSTEM_PROMPT = `You are an accountability coach running a deep onboarding conversation. Your goal is to build a complete picture of who this person is right now, who they want to become, and what is standing between those two realities.
 
-This is not a single-goal intake. You are building a full life picture — multiple goals, multiple problem areas, the identity they are reaching toward, and the specific blockers keeping them where they are.
+You are building a full life picture — multiple goals, multiple problem areas, the identity they are reaching toward, and the specific blockers in the way. At the end you will generate a personalized goal ladder — a sequence of small, specific steps calibrated to their blockers and vices that builds momentum from where they actually are.
 
-YOU ARE BUILDING A PROFILE WITH THESE COMPONENTS — find them naturally, never name them to the user:
+PROFILE COMPONENTS — find naturally, never name to the user:
 
-GOALS (multiple):
+GOALS:
 - Primary goal: the one that changes everything if achieved
 - Supporting goals: things that enable the primary or represent who they're becoming
-- Identity goals: things that aren't about achievement but about who they want to be (habits, values, character)
+- Identity goals: habits, values, character — not achievements but who they want to be
 
 CURRENT REALITY:
-- What their life actually looks like day to day
-- Problem areas they know about — not prompted with a list, asked openly
-- The gap between their current self and their desired self
+- What their life actually looks like day to day — walk them through it specifically
+- Problem areas — asked openly, never with a prompted list
+- The gap between current self and desired self
 
 DIAGNOSTIC:
-- Root blocker: the real environmental, situational, or identity reason they aren't moving
-- Failure pattern: the specific mechanism by which they've broken down before
-- Peak moment: a specific time they felt locked in and alive — how it felt, not just what they did
-- Keystone: the one area that if fixed first would create the most downstream improvement
+- Root blocker: real environmental, situational, or identity reason they aren't moving
+- Failure pattern: specific mechanism of breakdown — not "laziness" but the actual sequence of events
+- Peak moment: a specific time they felt locked in and alive — how it felt
+- Keystone: the one area that if improved first creates the most downstream change
 
-CONVERSATION STRUCTURE — follow this flow but stay conversational, not clinical:
+CONVERSATION FLOW:
 
-PHASE 1 — OPENING (2-3 exchanges)
-Start with: what are they trying to change, real version. Then: what does their life actually look like right now. Move fast. Establish the current reality quickly.
+PHASE 1 — CURRENT REALITY (2-3 exchanges)
+Open with the real version of what they want to change. Then get specific about their current life — not a general description but actual recent days. What did yesterday look like? The day before? Force specificity early.
 
 PHASE 2 — FULL PICTURE (3-4 exchanges)
-Ask about ALL goals — not just one. "Beyond that — what else are you trying to build or become? Could be anything — health, relationships, habits, finances, who you want to be." Let them list freely. Then ask what isn't working in their life right now, open ended. "Outside of your goals — what areas of your life do you know aren't where they should be?" No prompting, no categories. What they mention and what they leave out is diagnostic.
+Ask about ALL goals: "Beyond that — what else are you trying to build or become? Health, relationships, habits, who you want to be — what else is on the list?"
+Then ask about problem areas with this exact phrasing: "Outside of your goals — what parts of your life do you know aren't right?"
+No categories. No prompting. What they volunteer is the data.
 
 PHASE 3 — DIAGNOSIS (3-4 exchanges)
-Find the peak moment. Find the failure pattern. Find the root blocker. Connect the goals to a single identity shift — the thread that runs through all of them. "These aren't separate goals — they're all pointing at the same thing. What do you think that is?"
+For the failure pattern — instead of asking "what stops you", ask them to walk through a specific recent moment: "Think of the last time you had time to work on this and didn't. Walk me through exactly what happened."
+This question cannot be answered with "laziness" — it forces real description.
+
+Find the peak moment: "When in your life did things feel right — when you were actually moving? Walk me through what that period was like."
+Then ask how it felt, not just what they did.
+
+Connect all goals to one identity thread: "These aren't separate goals — they all point at the same thing. What do you think that is?"
 
 PHASE 4 — MIRROR
-Reflect back the full picture. Use their exact words. Connect their goals, their problem areas, their peak moment, and their blocker into one clear narrative. Name the identity they're reaching toward. Name what's actually in the way.
+Reflect back everything. Use their exact words. Connect goals, problem areas, peak moment, and blocker into one narrative. Name the identity they're reaching toward. Name what's actually in the way.
 End with: "Does that land?"
 
 PHASE 5 — COMMIT
-"Of everything we've covered — what's the one thing you could do tomorrow that would tell you this is real?"
-Push once if vague: "More specific — what exactly, and at what time?"
+Ask: "What's one specific thing you'll do tomorrow to actually start?"
+If vague, push once: "More specific — what exactly, and at what time?"
 Accept the second answer.
 
 CRITICAL RULES:
 
 ONE QUESTION PER MESSAGE. Always. Short. Stop.
 
-NO ASSUMPTIONS. Never state something as fact unless they said it. Infer by asking, not stating.
+NO ASSUMPTIONS. Never state something as fact unless they said it. Ask to confirm inferences.
 
-NO CHECKLIST. Never suggest categories of problems or goals. Ask open questions and let them surface what matters to them. What they volunteer is the real data.
+FORCE SPECIFICITY ON KEY QUESTIONS. Vague questions invite vague answers. When you need real data — make the question impossible to answer vaguely. "Walk me through exactly what happened" beats "what stopped you" every time.
 
-THREAD VALUE. After 2 exchanges on any topic — is this revealing blocker, identity, pattern, or goals? If not, cut and move. Low value: minor logistics, small habits. High value: specific failures, what success feels like, who they admire, peak moments.
+THREAD VALUE. After 2 exchanges — is this revealing blocker, identity, pattern, or goals? If not, cut. Low value: minor logistics, small chores. High value: specific failures, what success feels like, who they admire, peak moments, identity.
 
-CIRCLES. If vague answers repeat twice — pivot. "Let's come at this differently." Never press the same point more than twice.
+CIRCLES — CUT AT 2. Pivot after two vague answers on the same point. "Let's come at this differently."
 
-NO THERAPY. Don't dig into childhood or deep trauma unless it directly connects to a concrete present blocker. Cut psychological threads that aren't actionable.
+NO THERAPY. Cut psychological threads that aren't tied to concrete present blockers.
 
-VAGUE WORDS — PRESS ONCE. Lazy, motivation, comfortable, I guess. Press once. If still vague — move on.
+VAGUE WORDS — PRESS ONCE ONLY. Then move on.
 
-CONTRADICTIONS — NAME ONCE. Call it, once, directly. Move on if unresolved.
+CONTRADICTIONS — NAME ONCE. Move on if unresolved.
 
-EMOTIONAL LAYER — HIGH VALUE ONLY. On peak moments, specific failures, identity gaps — ask how it felt. Not on every exchange.
+EMOTIONAL LAYER — HIGH VALUE THREADS ONLY.
 
-EFFICIENCY. 14-18 exchanges maximum. At exchange 16 — move to mirror.
+EFFICIENCY. 14-18 exchanges max. Mirror at 16 regardless.
 
 FORBIDDEN: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense, good point.
 
 NEVER identify as AI or system.
 
-TONE: Direct, calm, efficient. Respects the person's time. Not unkind but not soft. 2-3 sentences max until the mirror.
+TONE: Direct, calm, efficient. 2-3 sentences max until mirror.
 
-NO ADVICE OR SOLUTIONS until the mirror and commit.
+NO ADVICE until mirror and commit.
 
 OPENING LINE — use exactly:
 "Before we set any goals or build any plans — tell me what you're actually trying to change. Not the version you'd tell someone to sound good. The real one."
 
-OUTPUT — after the commit, output this block:
+AFTER THE COMMIT — output two blocks:
 
+BLOCK 1 — PROFILE:
 ---PROFILE---
 PRIMARY_GOAL: [the goal that changes everything]
-SUPPORTING_GOALS: [other goals mentioned, comma separated]
-IDENTITY_TARGET: [the person they are becoming — one sentence]
-PROBLEM_AREAS: [what they said isn't working, comma separated, their words]
-ROOT_CAUSE: [actual environmental or situational blocker]
-FAILURE_PATTERN: [specific mechanism of breakdown]
+SUPPORTING_GOALS: [other goals, comma separated]
+IDENTITY_TARGET: [the person they are becoming — one sentence, their words]
+PROBLEM_AREAS: [what they said isn't working, comma separated, their exact words]
+ROOT_CAUSE: [actual blocker]
+FAILURE_PATTERN: [specific breakdown mechanism]
 IDENTITY_GAP: [who they are vs who they want to be]
-PEAK_MOMENT: [specific time they felt locked in — their exact words]
+PEAK_MOMENT: [specific time they felt locked in — their words]
 KEYSTONE: [one area to fix first and why]
-FIRST_ACTION: [their specific commit]
+FIRST_ACTION: [their specific commit with time]
 TONE: [direct / steady / encouraging]
----END---`;
+---END---
+
+BLOCK 2 — GOAL LADDER:
+---LADDER---
+A personalized sequence of 7 steps that builds from where they actually are to their primary goal.
+
+Rules for the ladder:
+- Step 1 must be achievable in the next 24 hours and take under 20 minutes. It should target the keystone area or the first action they committed to.
+- Each step is slightly harder than the last. No big jumps.
+- Steps address their specific problem areas and vices — not generic advice. If they mentioned a messy room, a step addresses it. If they mentioned drinking, a step addresses it. If they mentioned waking up late, a step addresses it.
+- Steps build on each other — completing one makes the next easier or more natural.
+- Each step has a WHY — one sentence explaining how it connects to their identity target.
+- Steps are not about the final goal — they are about becoming the person who achieves it.
+- Never prescribe lifestyle choices they didn't mention as problems.
+- Timeframes are approximate and realistic for their situation.
+
+Format each step exactly like this:
+STEP_1: [specific action] | WHY: [one sentence connection to identity] | WHEN: [timeframe]
+STEP_2: [specific action] | WHY: [one sentence] | WHEN: [timeframe]
+...continue to STEP_7
+---LADDER_END---`;
 
 let history = [];
 let loading = false;
 let started = false;
 let exchangeCount = 0;
 
-// ── KEY CHECK ──
 function checkKey() {
   const key = document.getElementById('api-key').value.trim();
   const dot = document.getElementById('api-dot');
@@ -640,12 +398,8 @@ async function startConversation() {
   await getCoachResponse();
 }
 
-// ── INPUT ──
 function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    if (!loading) send();
-  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!loading) send(); }
 }
 
 function autoResize(el) {
@@ -653,22 +407,17 @@ function autoResize(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
-// ── RENDER ──
 function appendMessage(role, content) {
   document.getElementById('empty-state')?.remove();
   const messages = document.getElementById('messages');
-
   const msg = document.createElement('div');
   msg.className = `msg ${role}`;
-
   const av = document.createElement('div');
   av.className = `avatar ${role === 'coach' ? 'coach-av' : 'user-av'}`;
   av.textContent = role === 'coach' ? 'XX' : 'YOU';
-
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   bubble.textContent = content;
-
   msg.appendChild(av);
   msg.appendChild(bubble);
   messages.appendChild(msg);
@@ -683,26 +432,17 @@ function scrollBottom() {
 function showTyping() {
   const messages = document.getElementById('messages');
   const msg = document.createElement('div');
-  msg.className = 'msg coach';
-  msg.id = 'typing';
-
+  msg.className = 'msg coach'; msg.id = 'typing';
   const av = document.createElement('div');
-  av.className = 'avatar coach-av';
-  av.textContent = 'XX';
-
+  av.className = 'avatar coach-av'; av.textContent = 'XX';
   const b = document.createElement('div');
   b.className = 'typing-bubble';
   b.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-
-  msg.appendChild(av);
-  msg.appendChild(b);
-  messages.appendChild(msg);
-  scrollBottom();
+  msg.appendChild(av); msg.appendChild(b);
+  messages.appendChild(msg); scrollBottom();
 }
 
-function removeTyping() {
-  document.getElementById('typing')?.remove();
-}
+function removeTyping() { document.getElementById('typing')?.remove(); }
 
 // ── PROFILE CARD ──
 function buildProfileCard(raw) {
@@ -717,126 +457,73 @@ function buildProfileCard(raw) {
   });
 
   const card = document.createElement('div');
-  card.className = 'profile-card';
-  card.id = 'profile-card';
+  card.className = 'profile-card'; card.id = 'profile-card';
 
   const title = document.createElement('h3');
   title.textContent = 'Coaching profile';
   card.appendChild(title);
 
-  // Identity target — big statement
   if (fields.IDENTITY_TARGET) {
-    const identSection = document.createElement('div');
-    identSection.className = 'profile-section';
-    const t = document.createElement('div');
-    t.className = 'profile-section-title';
-    t.textContent = 'Identity target';
-    const v = document.createElement('div');
-    v.style.cssText = 'font-size:15px;color:#fff;line-height:1.6;font-style:italic;padding:8px 0;';
-    v.textContent = '"' + fields.IDENTITY_TARGET + '"';
-    identSection.appendChild(t);
-    identSection.appendChild(v);
-    card.appendChild(identSection);
+    const s = document.createElement('div'); s.className = 'profile-section';
+    const t = document.createElement('div'); t.className = 'section-title'; t.textContent = 'Identity target';
+    const v = document.createElement('div'); v.className = 'identity-statement';
+    v.textContent = '\u201C' + fields.IDENTITY_TARGET + '\u201D';
+    s.appendChild(t); s.appendChild(v); card.appendChild(s);
   }
 
-  // Goals section
-  const goalsSection = document.createElement('div');
-  goalsSection.className = 'profile-section';
-  const goalsTitle = document.createElement('div');
-  goalsTitle.className = 'profile-section-title';
-  goalsTitle.textContent = 'Goals';
-  goalsSection.appendChild(goalsTitle);
-
+  // Goals
+  const gs = document.createElement('div'); gs.className = 'profile-section';
+  const gt = document.createElement('div'); gt.className = 'section-title'; gt.textContent = 'Goals';
+  gs.appendChild(gt);
   if (fields.PRIMARY_GOAL) {
-    const g = document.createElement('div');
-    g.className = 'goal-item';
-    const t = document.createElement('div');
-    t.className = 'goal-type';
-    t.textContent = 'Primary';
-    g.appendChild(t);
-    g.appendChild(document.createTextNode(fields.PRIMARY_GOAL));
-    goalsSection.appendChild(g);
+    const g = document.createElement('div'); g.className = 'goal-item';
+    const tp = document.createElement('div'); tp.className = 'goal-type'; tp.textContent = 'Primary';
+    g.appendChild(tp); g.appendChild(document.createTextNode(fields.PRIMARY_GOAL)); gs.appendChild(g);
   }
-
   if (fields.SUPPORTING_GOALS) {
     fields.SUPPORTING_GOALS.split(',').forEach(goal => {
-      const g = document.createElement('div');
-      g.className = 'goal-item';
-      const t = document.createElement('div');
-      t.className = 'goal-type';
-      t.textContent = 'Supporting';
-      g.appendChild(t);
-      g.appendChild(document.createTextNode(goal.trim()));
-      goalsSection.appendChild(g);
+      const g = document.createElement('div'); g.className = 'goal-item';
+      const tp = document.createElement('div'); tp.className = 'goal-type'; tp.textContent = 'Supporting';
+      g.appendChild(tp); g.appendChild(document.createTextNode(goal.trim())); gs.appendChild(g);
     });
   }
-  card.appendChild(goalsSection);
+  card.appendChild(gs);
 
   // Problem areas
   if (fields.PROBLEM_AREAS) {
-    const probSection = document.createElement('div');
-    probSection.className = 'profile-section';
-    const t = document.createElement('div');
-    t.className = 'profile-section-title';
-    t.textContent = 'Problem areas identified';
-    probSection.appendChild(t);
-    const tags = document.createElement('div');
-    tags.style.marginTop = '4px';
+    const ps = document.createElement('div'); ps.className = 'profile-section';
+    const pt = document.createElement('div'); pt.className = 'section-title'; pt.textContent = 'Problem areas';
+    ps.appendChild(pt);
+    const tags = document.createElement('div'); tags.className = 'problem-tags';
     fields.PROBLEM_AREAS.split(',').forEach(p => {
-      const tag = document.createElement('span');
-      tag.className = 'problem-tag';
-      tag.textContent = p.trim();
-      tags.appendChild(tag);
+      const tag = document.createElement('span'); tag.className = 'problem-tag'; tag.textContent = p.trim(); tags.appendChild(tag);
     });
-    probSection.appendChild(tags);
-    card.appendChild(probSection);
+    ps.appendChild(tags); card.appendChild(ps);
   }
 
-  // Diagnosis section
-  const diagSection = document.createElement('div');
-  diagSection.className = 'profile-section';
-  const diagTitle = document.createElement('div');
-  diagTitle.className = 'profile-section-title';
-  diagTitle.textContent = 'Diagnosis';
-  diagSection.appendChild(diagTitle);
-
-  const diagFields = [
-    ['ROOT_CAUSE',       'Root cause'],
-    ['FAILURE_PATTERN',  'Failure pattern'],
-    ['IDENTITY_GAP',     'Identity gap'],
-    ['PEAK_MOMENT',      'Peak moment'],
-    ['KEYSTONE',         'First target'],
-  ];
-
-  diagFields.forEach(([key, label]) => {
-    if (!fields[key]) return;
-    const row = document.createElement('div');
-    row.className = 'profile-row';
-    row.innerHTML = `<span class="profile-key">${label}</span><span class="profile-val">${fields[key]}</span>`;
-    diagSection.appendChild(row);
+  // Diagnosis
+  const ds = document.createElement('div'); ds.className = 'profile-section';
+  const dt = document.createElement('div'); dt.className = 'section-title'; dt.textContent = 'Diagnosis';
+  ds.appendChild(dt);
+  [['ROOT_CAUSE','Root cause'],['FAILURE_PATTERN','Failure pattern'],['IDENTITY_GAP','Identity gap'],['PEAK_MOMENT','Peak moment'],['KEYSTONE','First target']].forEach(([k,l]) => {
+    if (!fields[k]) return;
+    const row = document.createElement('div'); row.className = 'profile-row';
+    row.innerHTML = `<span class="profile-key">${l}</span><span class="profile-val">${fields[k]}</span>`;
+    ds.appendChild(row);
   });
-  card.appendChild(diagSection);
+  card.appendChild(ds);
 
-  // Commit
+  // First action
   if (fields.FIRST_ACTION) {
-    const commitSection = document.createElement('div');
-    commitSection.className = 'profile-section';
-    const t = document.createElement('div');
-    t.className = 'profile-section-title';
-    t.textContent = 'First commitment';
-    commitSection.appendChild(t);
-    const v = document.createElement('div');
-    v.style.cssText = 'font-size:14px;color:#C8F135;line-height:1.6;padding-top:4px;';
-    v.textContent = fields.FIRST_ACTION;
-    commitSection.appendChild(v);
-    card.appendChild(commitSection);
+    const cs = document.createElement('div'); cs.className = 'profile-section';
+    const ct = document.createElement('div'); ct.className = 'section-title'; ct.textContent = 'First commitment';
+    const cv = document.createElement('div');
+    cv.style.cssText = 'font-size:14px;color:var(--accent);line-height:1.6;padding-top:4px;';
+    cv.textContent = fields.FIRST_ACTION; cs.appendChild(ct); cs.appendChild(cv); card.appendChild(cs);
   }
 
-  // Tone
   if (fields.TONE) {
-    const row = document.createElement('div');
-    row.className = 'profile-row';
-    row.style.marginTop = '4px';
+    const row = document.createElement('div'); row.className = 'profile-row'; row.style.marginTop = '4px';
     row.innerHTML = `<span class="profile-key">Coaching tone</span><span class="profile-val">${fields.TONE}</span>`;
     card.appendChild(row);
   }
@@ -844,19 +531,90 @@ function buildProfileCard(raw) {
   return card;
 }
 
-function extractAndShowProfile(text) {
-  const match = text.match(/---PROFILE---([\s\S]*?)---END---/);
-  if (!match) return text;
+// ── LADDER CARD ──
+function buildLadderCard(raw) {
+  const steps = [];
+  raw.split('\n').forEach(line => {
+    const match = line.match(/^STEP_(\d+):\s*(.+?)\s*\|\s*WHY:\s*(.+?)\s*\|\s*WHEN:\s*(.+)$/i);
+    if (match) {
+      steps.push({ num: parseInt(match[1]), action: match[2].trim(), why: match[3].trim(), when: match[4].trim() });
+    }
+  });
 
-  const raw = match[1].trim();
-  const clean = text.replace(/---PROFILE---([\s\S]*?)---END---/, '').trim();
+  if (steps.length === 0) return null;
 
-  const card = buildProfileCard(raw);
-  document.getElementById('messages').appendChild(card);
-  scrollBottom();
-  document.getElementById('phase-label').textContent = 'Profile built';
+  const card = document.createElement('div');
+  card.className = 'ladder-card'; card.id = 'ladder-card';
 
-  return clean;
+  const title = document.createElement('h3'); title.textContent = 'Your path forward';
+  const sub = document.createElement('div'); sub.className = 'ladder-subtitle';
+  sub.textContent = 'A sequence built around where you actually are — not where you want to be. Complete these in order.';
+  card.appendChild(title); card.appendChild(sub);
+
+  steps.forEach((step, i) => {
+    const row = document.createElement('div'); row.className = 'ladder-step';
+
+    const num = document.createElement('div');
+    num.className = `step-num ${i === 0 ? 'active' : 'upcoming'}`;
+    num.textContent = step.num;
+
+    const content = document.createElement('div'); content.className = 'step-content';
+
+    const stitle = document.createElement('div');
+    stitle.className = `step-title${i === 0 ? ' active' : ''}`;
+    stitle.textContent = step.action;
+
+    const why = document.createElement('div'); why.className = 'step-why'; why.textContent = step.why;
+    const when = document.createElement('div'); when.className = 'step-timeframe'; when.textContent = step.when;
+
+    content.appendChild(stitle); content.appendChild(why); content.appendChild(when);
+    row.appendChild(num); row.appendChild(content);
+    card.appendChild(row);
+  });
+
+  return card;
+}
+
+// ── EXTRACT AND SHOW CARDS ──
+function processReply(text) {
+  let clean = text;
+
+  // Extract ladder first (so profile block is clean)
+  const ladderMatch = clean.match(/---LADDER---([\s\S]*?)---LADDER_END---/);
+  let ladderRaw = null;
+  if (ladderMatch) {
+    ladderRaw = ladderMatch[1].trim();
+    clean = clean.replace(/---LADDER---([\s\S]*?)---LADDER_END---/, '').trim();
+  }
+
+  // Extract profile
+  const profileMatch = clean.match(/---PROFILE---([\s\S]*?)---END---/);
+  let profileRaw = null;
+  if (profileMatch) {
+    profileRaw = profileMatch[1].trim();
+    clean = clean.replace(/---PROFILE---([\s\S]*?)---END---/, '').trim();
+  }
+
+  // Show remaining text
+  if (clean) appendMessage('coach', clean);
+
+  // Show profile card
+  if (profileRaw) {
+    const card = buildProfileCard(profileRaw);
+    document.getElementById('messages').appendChild(card);
+    document.getElementById('phase-label').textContent = 'Profile built';
+  }
+
+  // Show ladder card
+  if (ladderRaw) {
+    const card = buildLadderCard(ladderRaw);
+    if (card) {
+      document.getElementById('messages').appendChild(card);
+      document.getElementById('phase-label').textContent = 'Path ready';
+    }
+  }
+
+  if (profileRaw || ladderRaw) scrollBottom();
 }
 
 // ── API CALL ──
@@ -864,13 +622,9 @@ async function getCoachResponse(userMessage = null) {
   const key = document.getElementById('api-key').value.trim();
   if (!key) return;
 
-  if (userMessage) {
-    history.push({ role: 'user', content: userMessage });
-    exchangeCount++;
-  }
+  if (userMessage) { history.push({ role: 'user', content: userMessage }); exchangeCount++; }
 
-  setLoading(true);
-  showTyping();
+  setLoading(true); showTyping();
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -883,32 +637,19 @@ async function getCoachResponse(userMessage = null) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1500,
+        max_tokens: 2000,
         system: SYSTEM_PROMPT,
-        messages: history.length > 0 ? history : [
-          { role: 'user', content: 'Begin the onboarding.' }
-        ]
+        messages: history.length > 0 ? history : [{ role: 'user', content: 'Begin the onboarding.' }]
       })
     });
 
     const data = await res.json();
     removeTyping();
 
-    if (data.error) {
-      appendMessage('coach', 'Error: ' + data.error.message);
-      setLoading(false);
-      return;
-    }
+    if (data.error) { appendMessage('coach', 'Error: ' + data.error.message); setLoading(false); return; }
 
-    let reply = data.content[0].text;
-
-    if (reply.includes('---PROFILE---')) {
-      const cleaned = extractAndShowProfile(reply);
-      if (cleaned) appendMessage('coach', cleaned);
-    } else {
-      appendMessage('coach', reply);
-    }
-
+    const reply = data.content[0].text;
+    processReply(reply);
     history.push({ role: 'assistant', content: reply });
 
   } catch (err) {
@@ -919,18 +660,15 @@ async function getCoachResponse(userMessage = null) {
   setLoading(false);
 }
 
-// ── SEND ──
 async function send() {
   const input = document.getElementById('input');
   const text = input.value.trim();
   if (!text || loading) return;
-  input.value = '';
-  input.style.height = 'auto';
+  input.value = ''; input.style.height = 'auto';
   appendMessage('user', text);
   await getCoachResponse(text);
 }
 
-// ── LOADING — only disables send button ──
 function setLoading(val) {
   loading = val;
   document.getElementById('send-btn').disabled = val;
@@ -938,52 +676,52 @@ function setLoading(val) {
 
 // ── EXPORT ──
 function exportChat() {
-  if (history.length === 0) {
-    showToast('Nothing to export yet');
-    return;
-  }
+  if (history.length === 0) { showToast('Nothing to export yet'); return; }
 
-  const lines = [];
-  lines.push('XXXXX — Onboarding Session');
-  lines.push('Exported: ' + new Date().toLocaleString());
-  lines.push('='.repeat(44));
-  lines.push('');
+  const lines = ['XXXXX — Onboarding Session', 'Exported: ' + new Date().toLocaleString(), '='.repeat(44), ''];
 
   history.forEach(msg => {
     const role = msg.role === 'assistant' ? 'COACH' : 'YOU';
-    const content = msg.content.replace(/---PROFILE---([\s\S]*?)---END---/, '').trim();
-    if (content) {
-      lines.push(role + ':');
-      lines.push(content);
-      lines.push('');
-    }
+    const content = msg.content
+      .replace(/---PROFILE---([\s\S]*?)---END---/, '')
+      .replace(/---LADDER---([\s\S]*?)---LADDER_END---/, '')
+      .trim();
+    if (content) { lines.push(role + ':'); lines.push(content); lines.push(''); }
   });
 
-  // Profile block
-  const card = document.getElementById('profile-card');
-  if (card) {
-    lines.push('='.repeat(44));
-    lines.push('COACHING PROFILE');
-    lines.push('');
-    card.querySelectorAll('.goal-item').forEach(g => {
+  const profileCard = document.getElementById('profile-card');
+  if (profileCard) {
+    lines.push('='.repeat(44)); lines.push('COACHING PROFILE'); lines.push('');
+    profileCard.querySelectorAll('.goal-item').forEach(g => {
       const type = g.querySelector('.goal-type')?.textContent || '';
-      const val = g.childNodes[g.childNodes.length - 1]?.textContent?.trim() || '';
-      if (val) lines.push(type.toUpperCase() + ' GOAL: ' + val);
+      const val = Array.from(g.childNodes).filter(n => n.nodeType === 3).map(n => n.textContent.trim()).join('').trim();
+      if (val) lines.push(type + ' GOAL: ' + val);
     });
-    card.querySelectorAll('.profile-row').forEach(row => {
+    profileCard.querySelectorAll('.profile-row').forEach(row => {
       const k = row.querySelector('.profile-key')?.textContent || '';
       const v = row.querySelector('.profile-val')?.textContent || '';
       if (k && v) lines.push(k.toUpperCase() + ': ' + v);
     });
-    const commit = card.querySelector('[style*="C8F135"]');
-    if (commit) lines.push('FIRST ACTION: ' + commit.textContent);
+  }
+
+  const ladderCard = document.getElementById('ladder-card');
+  if (ladderCard) {
+    lines.push(''); lines.push('='.repeat(44)); lines.push('GOAL LADDER'); lines.push('');
+    ladderCard.querySelectorAll('.ladder-step').forEach(step => {
+      const num = step.querySelector('.step-num')?.textContent || '';
+      const title = step.querySelector('.step-title')?.textContent || '';
+      const why = step.querySelector('.step-why')?.textContent || '';
+      const when = step.querySelector('.step-timeframe')?.textContent || '';
+      if (title) lines.push(`Step ${num}: ${title}`);
+      if (why) lines.push(`  Why: ${why}`);
+      if (when) lines.push(`  When: ${when}`);
+      lines.push('');
+    });
   }
 
   const text = lines.join('\n');
-
   if (navigator.share) {
-    navigator.share({ title: 'XXXXX Onboarding', text })
-      .catch(() => copyToClipboard(text));
+    navigator.share({ title: 'XXXXX Onboarding', text }).catch(() => copyToClipboard(text));
   } else {
     copyToClipboard(text);
   }
@@ -997,46 +735,31 @@ function copyToClipboard(text) {
       btn.classList.add('success');
       setTimeout(() => btn.classList.remove('success'), 2000);
     }).catch(() => downloadTxt(text));
-  } else {
-    downloadTxt(text);
-  }
+  } else { downloadTxt(text); }
 }
 
 function downloadTxt(text) {
   const a = document.createElement('a');
   a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
   a.download = 'xxxxx-session-' + Date.now() + '.txt';
-  a.click();
-  showToast('Downloaded');
+  a.click(); showToast('Downloaded');
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
+  const t = document.getElementById('toast'); t.textContent = msg;
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// ── RESET ──
 function resetConversation() {
-  history = [];
-  started = false;
-  exchangeCount = 0;
-  document.getElementById('messages').innerHTML = `
-    <div class="empty" id="empty-state">
-      <div class="empty-mark">XXXXX</div>
-      <div class="empty-sub">Enter your API key to begin</div>
-    </div>`;
+  history = []; started = false; exchangeCount = 0;
+  document.getElementById('messages').innerHTML = `<div class="empty" id="empty-state"><div class="empty-mark">XXXXX</div><div class="empty-sub">Enter your API key to begin</div></div>`;
   document.getElementById('phase-label').textContent = 'Onboarding';
   document.getElementById('input').value = '';
   document.getElementById('input').style.height = 'auto';
   checkKey();
 }
 
-// ── MOBILE KEYBOARD SCROLL FIX ──
-document.getElementById('input').addEventListener('focus', () => {
-  setTimeout(scrollBottom, 350);
-});
+document.getElementById('input').addEventListener('focus', () => { setTimeout(scrollBottom, 350); });
 </script>
 </body>
 </html>
