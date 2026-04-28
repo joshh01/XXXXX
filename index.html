@@ -34,7 +34,14 @@
     overflow:hidden; display:flex; flex-direction:column;
   }
 
-  .top-line { height:2px; background:var(--accent); flex-shrink:0; }
+  .top-line { height:2px; background:var(--border); flex-shrink:0; position:relative; overflow:hidden; }
+  .top-line-fill {
+    position:absolute; top:0; left:0;
+    height:100%; width:0%;
+    background:var(--accent);
+    transition:width 1.2s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:0 0 8px rgba(200,241,53,0.4);
+  }
 
   header {
     height:var(--header-h); padding:0 16px;
@@ -266,76 +273,7 @@
     text-align:center; letter-spacing:0.5px;
   }
 
-  /* ── PROGRESS BAR ── */
-  .progress-bar {
-    height:2px;
-    background:var(--border);
-    flex-shrink:0;
-    position:relative;
-    overflow:hidden;
-  }
-
-  .progress-fill {
-    height:100%;
-    background:var(--accent);
-    transition:width 0.6s ease;
-    width:0%;
-  }
-
-  .stage-dots {
-    display:flex; gap:0;
-    padding:8px 16px 6px;
-    background:var(--black);
-    border-bottom:1px solid var(--border);
-    flex-shrink:0;
-  }
-
-  .stage-dot-wrap {
-    flex:1; display:flex; flex-direction:column;
-    align-items:center; gap:4px; position:relative;
-  }
-
-  .stage-dot-wrap:not(:last-child)::after {
-    content:'';
-    position:absolute;
-    top:5px; left:calc(50% + 5px);
-    width:calc(100% - 10px); height:1px;
-    background:var(--border-mid);
-  }
-
-  .stage-dot-wrap.done::after { background:var(--accent-dim); }
-
-  .stage-dot {
-    width:10px; height:10px; border-radius:50%;
-    background:var(--border-mid);
-    border:1px solid var(--border-mid);
-    transition:background 0.4s, border-color 0.4s;
-    position:relative; z-index:1;
-  }
-
-  .stage-dot-wrap.active .stage-dot {
-    background:var(--accent);
-    border-color:var(--accent);
-    box-shadow:0 0 6px rgba(200,241,53,0.5);
-  }
-
-  .stage-dot-wrap.done .stage-dot {
-    background:var(--accent-dim);
-    border-color:var(--accent-dim);
-  }
-
-  .stage-label {
-    font-family:'DM Mono',monospace;
-    font-size:8px; letter-spacing:0.5px;
-    color:var(--dimmer); text-align:center;
-    line-height:1.2;
-    transition:color 0.4s;
-  }
-
-  .stage-dot-wrap.active .stage-label { color:var(--accent); }
-  .stage-dot-wrap.done .stage-label { color:var(--accent-dim); }
-
-  @media(max-width:380px) { .stage-label { font-size:7px; } }
+  
 </style>
 </head>
 <body>
@@ -370,14 +308,14 @@
   <div class="intro-note">Requires API key · Enter after this screen</div>
 </div>
 
-<div class="top-line"></div>
+<div class="top-line"><div class="top-line-fill" id="progress-fill"></div></div>
 <div class="toast" id="toast"></div>
 
 <header>
   <div class="header-left">
     <span class="wordmark">XXXXX</span>
     <span class="phase-pill" id="phase-label">Onboarding</span>
-    <span class="version-tag">v10</span>
+    <span class="version-tag">v11</span>
   </div>
   <div class="header-right">
     <button class="icon-btn" id="export-btn" onclick="exportChat()">
@@ -393,30 +331,6 @@
     <input class="api-input" id="api-key" type="password" placeholder="API key" autocomplete="off" oninput="checkKey()"/>
   </div>
 </header>
-
-<!-- STAGE PROGRESS -->
-<div class="stage-dots" id="stage-dots">
-  <div class="stage-dot-wrap active" id="stage-1">
-    <div class="stage-dot"></div>
-    <div class="stage-label">Opening</div>
-  </div>
-  <div class="stage-dot-wrap" id="stage-2">
-    <div class="stage-dot"></div>
-    <div class="stage-label">Full Picture</div>
-  </div>
-  <div class="stage-dot-wrap" id="stage-3">
-    <div class="stage-dot"></div>
-    <div class="stage-label">Diagnosis</div>
-  </div>
-  <div class="stage-dot-wrap" id="stage-4">
-    <div class="stage-dot"></div>
-    <div class="stage-label">Mirror</div>
-  </div>
-  <div class="stage-dot-wrap" id="stage-5">
-    <div class="stage-dot"></div>
-    <div class="stage-label">Your Path</div>
-  </div>
-</div>
 
 <div class="messages" id="messages">
   <div class="empty" id="empty-state">
@@ -436,6 +350,7 @@
     </button>
   </div>
   <div class="hint" id="hint">Enter API key to begin</div>
+  <div class="deep-hint" id="deep-hint">Take your time with this one...</div>
 </div>
 
 <script>
@@ -465,15 +380,13 @@ CONVERSATION FLOW:
 
 PHASE 1 — CURRENT REALITY (2-3 exchanges)
 Open with the real version of what they want to change. Then get specific about their current life — not a general description but actual recent days. What did yesterday look like? The day before? Force specificity early.
-When transitioning to Phase 2, include this exact tag on a new line at the very end of your message (the frontend uses it, the user won't see it): [STAGE:2]
-
 PHASE 2 — FULL PICTURE (3-4 exchanges)
 Ask about ALL goals: "Beyond that — what else are you trying to build or become? Health, relationships, habits, who you want to be — what else is on the list?"
 Then ask about problem areas with this exact phrasing: "Outside of those goals — what else would you change about your day-to-day if you could? Could be habits, routines, anything."
 No categories. No prompting. What they volunteer is the data. This framing is aspirational not confessional — people answer more honestly.
 
 PHASE 3 — DIAGNOSIS (3-4 exchanges)
-When transitioning to Phase 3, include [STAGE:3] at the very end of your message.
+When transitioning to Phase 3, include  at the very end of your message.
 For the failure pattern — instead of asking "what stops you", ask them to walk through a specific recent moment: "Think of the last time you had time to work on this and didn't. Walk me through exactly what happened."
 This question cannot be answered with "laziness" — it forces real description.
 
@@ -486,7 +399,6 @@ This is grounded in their words and gives them a direction to answer toward.
 FOLLOW UP ON HIGH VALUE THREADS. When someone mentions something significant — a stale relationship, hours of scrolling, a vice, an abandoned habit — go one level deeper before moving on. One follow-up question. "What does that look like day to day?" or "How long has that been the case?" Don't just log it and move on. These threads often contain the real picture.
 
 PHASE 4 — MIRROR (two segments)
-Include [STAGE:4] at the very end of your first mirror message.
 
 SEGMENT A — THE DIAGNOSIS:
 Reflect back who this person is right now and what is actually in the way. Use their exact words. Connect their current reality, their problem areas, their failure pattern, and their root blocker into one clear narrative. Keep it tight — 4-6 sentences maximum. Name the uncomfortable thing directly.
@@ -512,6 +424,8 @@ ONE QUESTION PER MESSAGE. Always. Short. Stop.
 
 NO ASSUMPTIONS. Never state something as fact unless they said it. Ask to confirm inferences.
 
+ASK THE TIME WHEN SOMEONE DESCRIBES THEIR MORNING. Whenever someone says they woke up, started their day, or describes a morning routine — always ask what time. Wake time is a keystone data point. Don't skip it.
+
 NATURAL PACING. Take as long as the conversation needs. A natural conversation that finds real answers is always better than a rushed one that misses them. Do not cut threads short to move faster. Move when a thread is genuinely exhausted or low value — not on a timer.
 
 FORCE SPECIFICITY ON KEY QUESTIONS. Vague questions invite vague answers. When you need real data — make the question impossible to answer vaguely. "Walk me through exactly what happened" beats "what stopped you" every time.
@@ -525,6 +439,13 @@ NO THERAPY. Cut psychological threads not tied to concrete present blockers. Exc
 VAGUE WORDS — PRESS ONCE ONLY. Then move on.
 
 VARY YOUR LANGUAGE. Never use the same phrase twice in a conversation. Rotate these when pressing for depth: "Take a guess.", "What's your gut say?", "What comes to mind first?", "If you had to put words to it?", "What does it feel like, even loosely?". Using the same phrase repeatedly makes the coach feel scripted.
+
+SIGNAL DEEP QUESTIONS. When asking a question that probes fear, identity, peak moments, or root cause — questions that require real thought rather than a quick answer — prefix the question with one of these phrases, then ask the question on a new line. Rotate the phrase each time:
+- "Sit with that before you answer."
+- "Take a moment with this one."
+- "Don't rush this one."
+- "There's no quick answer here —"
+Also include the tag [DEEP] at the very start of your message (before any text) so the interface can highlight the input. The tag will be stripped and the user won't see it.
 
 CONTRADICTIONS — NAME ONCE. Move on if unresolved.
 
@@ -602,29 +523,42 @@ function startFromIntro() {
   document.getElementById('intro-screen').style.display = 'none';
 }
 
-// ── STAGE ADVANCEMENT ──
-let currentStage = 1;
-
-function advanceStage(n) {
-  if (n <= currentStage) return;
-  currentStage = n;
-  for (let i = 1; i <= 5; i++) {
-    const el = document.getElementById('stage-' + i);
-    if (!el) continue;
-    el.classList.remove('active', 'done');
-    if (i < n) el.classList.add('done');
-    else if (i === n) el.classList.add('active');
-  }
-}
-
-// Strip stage tags from message before displaying
-function stripStageTags(text) {
-  const stageMatch = text.match(/\[STAGE:(\d)\]/);
-  if (stageMatch) {
-    advanceStage(parseInt(stageMatch[1]));
-    text = text.replace(/\[STAGE:\d\]/g, '').trim();
+// Strip [DEEP] tag and activate deep mode on input
+function stripDeepTag(text) {
+  if (text.startsWith('[DEEP]')) {
+    text = text.replace('[DEEP]', '').trim();
+    activateDeepMode();
   }
   return text;
+}
+
+function activateDeepMode() {
+  const ta = document.getElementById('input');
+  const hint = document.getElementById('deep-hint');
+  ta.classList.add('deep-mode');
+  ta.placeholder = '';
+  hint.classList.add('show');
+  // Remove on first keypress
+  ta.addEventListener('keydown', function clearDeep() {
+    ta.classList.remove('deep-mode');
+    ta.placeholder = 'Type your response...';
+    hint.classList.remove('show');
+    ta.removeEventListener('keydown', clearDeep);
+  }, { once: true });
+}
+
+// Ambient progress bar — based purely on exchange count
+const MAX_EXCHANGES = 18;
+function updateProgress() {
+  const pct = Math.min((exchangeCount / MAX_EXCHANGES) * 100, 95);
+  const fill = document.getElementById('progress-fill');
+  if (fill) fill.style.width = pct + '%';
+}
+
+// Complete progress on profile render
+function completeProgress() {
+  const fill = document.getElementById('progress-fill');
+  if (fill) fill.style.width = '100%';
 }
 
 function checkKey() {
@@ -667,9 +601,12 @@ function autoResize(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
-function appendMessage(role, content) {
+let msgStartTime = null;
+
+function appendMessage(role, content, responseMs) {
   document.getElementById('empty-state')?.remove();
   const messages = document.getElementById('messages');
+  const wrap = document.createElement('div');
   const msg = document.createElement('div');
   msg.className = `msg ${role}`;
   const av = document.createElement('div');
@@ -680,7 +617,15 @@ function appendMessage(role, content) {
   bubble.textContent = content;
   msg.appendChild(av);
   msg.appendChild(bubble);
-  messages.appendChild(msg);
+  wrap.appendChild(msg);
+  // Dev timestamp
+  if (responseMs) {
+    const meta = document.createElement('div');
+    meta.className = `msg-meta${role === 'user' ? ' msg user' : ''}`;
+    meta.textContent = (responseMs / 1000).toFixed(1) + 's';
+    wrap.appendChild(meta);
+  }
+  messages.appendChild(wrap);
   scrollBottom();
 }
 
@@ -878,12 +823,13 @@ function processReply(text) {
 }
 
 // ── API CALL ──
-async function getCoachResponse(userMessage = null) {
+async function getCoachResponse(userMessage = null, isRetry = false) {
   const key = document.getElementById('api-key').value.trim();
   if (!key) return;
 
-  if (userMessage) { history.push({ role: 'user', content: userMessage }); exchangeCount++; }
+  if (userMessage) { history.push({ role: 'user', content: userMessage }); }
 
+  msgStartTime = Date.now();
   setLoading(true); showTyping();
 
   try {
@@ -906,15 +852,32 @@ async function getCoachResponse(userMessage = null) {
     const data = await res.json();
     removeTyping();
 
-    if (data.error) { appendMessage('coach', 'Error: ' + data.error.message); setLoading(false); return; }
+    if (data.error) {
+      if (!isRetry && (data.error.type === 'overloaded_error' || data.error.status === 529)) {
+        setTimeout(async () => { removeTyping(); await getCoachResponse(null, true); }, 2000);
+        return;
+      }
+      removeTyping();
+      appendMessage('coach', 'Error: ' + data.error.message);
+      setLoading(false);
+      return;
+    }
 
-    const reply = stripStageTags(data.content[0].text);
+    const reply = stripDeepTag(data.content[0].text);
     processReply(reply);
     history.push({ role: 'assistant', content: reply });
 
   } catch (err) {
-    removeTyping();
-    appendMessage('coach', 'Connection error. Check your API key and try again.');
+    // Auto-retry once after 2 seconds
+    if (!isRetry) {
+      setTimeout(async () => {
+        removeTyping();
+        await getCoachResponse(null, true);
+      }, 2000);
+    } else {
+      removeTyping();
+      appendMessage('coach', 'Connection error. Check your API key and try again.');
+    }
   }
 
   setLoading(false);
@@ -926,6 +889,8 @@ async function send() {
   if (!text || loading) return;
   input.value = ''; input.style.height = 'auto';
   appendMessage('user', text);
+  exchangeCount++;
+  updateProgress();
   await getCoachResponse(text);
 }
 
@@ -1011,14 +976,9 @@ function showToast(msg) {
 }
 
 function resetConversation() {
-  history = []; started = false; exchangeCount = 0; currentStage = 1;
-  // Reset stage dots
-  for (let i = 1; i <= 5; i++) {
-    const el = document.getElementById('stage-' + i);
-    if (!el) continue;
-    el.classList.remove('active', 'done');
-    if (i === 1) el.classList.add('active');
-  }
+  history = []; started = false; exchangeCount = 0;
+  const fill = document.getElementById('progress-fill');
+  if (fill) fill.style.width = '0%';
   document.getElementById('messages').innerHTML = `<div class="empty" id="empty-state"><div class="empty-mark">XXXXX</div><div class="empty-sub">Enter your API key to begin</div></div>`;
   document.getElementById('phase-label').textContent = 'Onboarding';
   document.getElementById('input').value = '';
