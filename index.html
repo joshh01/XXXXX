@@ -34,14 +34,7 @@
     overflow:hidden; display:flex; flex-direction:column;
   }
 
-  .top-line { height:2px; background:var(--border); flex-shrink:0; position:relative; overflow:hidden; }
-  .top-line-fill {
-    position:absolute; top:0; left:0;
-    height:100%; width:0%;
-    background:var(--accent);
-    transition:width 1.2s cubic-bezier(0.4,0,0.2,1);
-    box-shadow:0 0 8px rgba(200,241,53,0.4);
-  }
+  .top-line { height:2px; background:var(--accent); flex-shrink:0; }
 
   header {
     height:var(--header-h); padding:0 16px;
@@ -308,14 +301,14 @@
   <div class="intro-note">Requires API key · Enter after this screen</div>
 </div>
 
-<div class="top-line"><div class="top-line-fill" id="progress-fill"></div></div>
+<div class="top-line"></div>
 <div class="toast" id="toast"></div>
 
 <header>
   <div class="header-left">
     <span class="wordmark">XXXXX</span>
     <span class="phase-pill" id="phase-label">Onboarding</span>
-    <span class="version-tag">v11</span>
+    <span class="version-tag">v12</span>
   </div>
   <div class="header-right">
     <button class="icon-btn" id="export-btn" onclick="exportChat()">
@@ -350,7 +343,6 @@
     </button>
   </div>
   <div class="hint" id="hint">Enter API key to begin</div>
-  <div class="deep-hint" id="deep-hint">Take your time with this one...</div>
 </div>
 
 <script>
@@ -396,6 +388,8 @@ Then ask how it felt, not just what they did.
 Connect all goals to one identity thread — anchor it to something they actually said: "The [goal], the [other goal], the [thing they mentioned] — you said [specific thing they said about themselves]. What does the person who has all of this figured out actually look like to you?"
 This is grounded in their words and gives them a direction to answer toward.
 
+FOLLOW UP ON HIGH VALUE THREADS. When someone mentions social goals (make more friends, improve relationships, feel more connected) — always ask what their current social life actually looks like before moving on. This almost always connects to the identity gap and peer environment.
+
 FOLLOW UP ON HIGH VALUE THREADS. When someone mentions something significant — a stale relationship, hours of scrolling, a vice, an abandoned habit — go one level deeper before moving on. One follow-up question. "What does that look like day to day?" or "How long has that been the case?" Don't just log it and move on. These threads often contain the real picture.
 
 PHASE 4 — MIRROR (two segments)
@@ -416,7 +410,9 @@ Wait for confirmation. Then output the profile and ladder blocks.
 PHASE 5 — COMMIT
 Before the profile and ladder output, ask: "What's one specific thing you'll do tomorrow to actually start?"
 If vague, push once: "More specific — what exactly, and at what time?"
-IMPORTANT: The commit must involve doing or creating something — not consuming. Watching a video, reading, researching — these are not commits. If they give a consumption answer push once: "That's a start — what will you actually do with what you find? What's the first thing you'll create or take action on?" Accept the second answer. Then output both blocks.
+IMPORTANT: The commit must involve doing or creating something — not consuming. Watching a video, reading, researching — these are not commits. If they give a consumption answer push once: "That's a start — what will you actually do with what you find? What's the first thing you'll create or take action on?"
+
+ALSO: If the commit is organizational or setup (creating folders, making a plan, organizing files) push once: "Good start — what's the first actual thing you'll put in those folders or build from that plan?" Accept the second answer. Then output both blocks.
 
 CRITICAL RULES:
 
@@ -437,6 +433,8 @@ CIRCLES — CUT AT 2. Pivot after two vague answers on the same point. "Let's co
 NO THERAPY. Cut psychological threads not tied to concrete present blockers. Exception: see SENSITIVE SITUATIONS below.
 
 VAGUE WORDS — PRESS ONCE ONLY. Then move on.
+
+LIFE TRANSITIONS — PRESS ONCE ON "NOT SURE". When someone says "not sure" about what changed during a major life transition (school ending, job change, relationship change, moving) — push once: "What changed specifically about your days when that happened?" These transitions almost always contain the root cause of the current pattern.
 
 VARY YOUR LANGUAGE. Never use the same phrase twice in a conversation. Rotate these when pressing for depth: "Take a guess.", "What's your gut say?", "What comes to mind first?", "If you had to put words to it?", "What does it feel like, even loosely?". Using the same phrase repeatedly makes the coach feel scripted.
 
@@ -473,8 +471,8 @@ MENTAL HEALTH: If someone surfaces signs of serious depression, self-harm, or cr
 
 SCOPE BOUNDARY: This is an accountability coach, not a therapist, relationship counselor, or crisis service. If something is clearly outside this scope — acknowledge it, point to appropriate help, and offer to continue with what is within scope.
 
-OPENING LINE — use exactly:
-"Before we set any goals or build any plans — tell me what you're actually trying to change. Not the version you'd tell someone to sound good. The real one."
+OPENING LINE — use exactly (do not include quotes around the message, just say it directly):
+Before we set any goals or build any plans — tell me what you're actually trying to change. Not the version you'd tell someone to sound good. The real one.
 
 AFTER THE COMMIT — output two blocks:
 
@@ -523,43 +521,24 @@ function startFromIntro() {
   document.getElementById('intro-screen').style.display = 'none';
 }
 
-// Strip [DEEP] tag and activate deep mode on input
+// Strip [DEEP] tag — returns {text, isDeep}
 function stripDeepTag(text) {
-  if (text.startsWith('[DEEP]')) {
-    text = text.replace('[DEEP]', '').trim();
-    activateDeepMode();
-  }
-  return text;
+  const isDeep = text.startsWith('[DEEP]');
+  if (isDeep) text = text.replace('[DEEP]', '').trim();
+  return { text, isDeep };
 }
 
-function activateDeepMode() {
-  const ta = document.getElementById('input');
-  const hint = document.getElementById('deep-hint');
-  ta.classList.add('deep-mode');
-  ta.placeholder = '';
-  hint.classList.add('show');
-  // Remove on first keypress
-  ta.addEventListener('keydown', function clearDeep() {
-    ta.classList.remove('deep-mode');
-    ta.placeholder = 'Type your response...';
-    hint.classList.remove('show');
-    ta.removeEventListener('keydown', clearDeep);
-  }, { once: true });
+function activateDeepMode(bubble) {
+  if (!bubble) return;
+  bubble.classList.add('deep-bubble');
+  // Add a subtle label above the message text
+  const label = document.createElement('span');
+  label.className = 'deep-label';
+  label.textContent = 'Take a moment';
+  bubble.insertBefore(label, bubble.firstChild);
 }
 
-// Ambient progress bar — based purely on exchange count
-const MAX_EXCHANGES = 18;
-function updateProgress() {
-  const pct = Math.min((exchangeCount / MAX_EXCHANGES) * 100, 95);
-  const fill = document.getElementById('progress-fill');
-  if (fill) fill.style.width = pct + '%';
-}
 
-// Complete progress on profile render
-function completeProgress() {
-  const fill = document.getElementById('progress-fill');
-  if (fill) fill.style.width = '100%';
-}
 
 function checkKey() {
   const key = document.getElementById('api-key').value.trim();
@@ -603,10 +582,11 @@ function autoResize(el) {
 
 let msgStartTime = null;
 
-function appendMessage(role, content, responseMs) {
+function appendMessage(role, content, responseMs, isDeep) {
   document.getElementById('empty-state')?.remove();
   const messages = document.getElementById('messages');
   const wrap = document.createElement('div');
+  wrap.style.display = 'contents';
   const msg = document.createElement('div');
   msg.className = `msg ${role}`;
   const av = document.createElement('div');
@@ -615,13 +595,14 @@ function appendMessage(role, content, responseMs) {
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   bubble.textContent = content;
+  if (isDeep && role === 'coach') activateDeepMode(bubble);
   msg.appendChild(av);
   msg.appendChild(bubble);
   wrap.appendChild(msg);
-  // Dev timestamp
-  if (responseMs) {
+  // Dev timestamp — always show for coach messages
+  if (responseMs && role === 'coach') {
     const meta = document.createElement('div');
-    meta.className = `msg-meta${role === 'user' ? ' msg user' : ''}`;
+    meta.className = 'msg-meta';
     meta.textContent = (responseMs / 1000).toFixed(1) + 's';
     wrap.appendChild(meta);
   }
@@ -890,7 +871,6 @@ async function send() {
   input.value = ''; input.style.height = 'auto';
   appendMessage('user', text);
   exchangeCount++;
-  updateProgress();
   await getCoachResponse(text);
 }
 
@@ -977,8 +957,7 @@ function showToast(msg) {
 
 function resetConversation() {
   history = []; started = false; exchangeCount = 0;
-  const fill = document.getElementById('progress-fill');
-  if (fill) fill.style.width = '0%';
+
   document.getElementById('messages').innerHTML = `<div class="empty" id="empty-state"><div class="empty-mark">XXXXX</div><div class="empty-sub">Enter your API key to begin</div></div>`;
   document.getElementById('phase-label').textContent = 'Onboarding';
   document.getElementById('input').value = '';
