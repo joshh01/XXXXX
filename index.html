@@ -203,9 +203,172 @@
     opacity:0.5;
     flex-shrink:0;
   }
+
+  /* ── INTRO SCREEN ── */
+  .intro-screen {
+    position:fixed; inset:0;
+    background:var(--black);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:32px 24px;
+    z-index:100;
+    animation:fadeUp 0.4s ease both;
+  }
+
+  .intro-logo {
+    font-family:'DM Mono',monospace;
+    font-size:28px; font-weight:500;
+    letter-spacing:8px; color:var(--accent);
+    margin-bottom:40px;
+  }
+
+  .intro-card {
+    background:var(--card);
+    border:1px solid var(--border-mid);
+    border-radius:var(--radius);
+    padding:24px;
+    max-width:420px; width:100%;
+    margin-bottom:28px;
+  }
+
+  .intro-row {
+    display:flex; gap:14px; align-items:flex-start;
+    margin-bottom:20px;
+  }
+  .intro-row:last-child { margin-bottom:0; }
+
+  .intro-icon {
+    width:32px; height:32px; border-radius:50%;
+    background:var(--accent-bg); border:1px solid var(--accent-border);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-top:1px;
+    font-family:'DM Mono',monospace; font-size:11px; color:var(--accent);
+  }
+
+  .intro-text { flex:1; }
+  .intro-text strong { display:block; font-size:14px; color:var(--white); margin-bottom:3px; font-weight:500; }
+  .intro-text span { font-size:13px; color:var(--dim); line-height:1.5; }
+
+  .intro-start {
+    width:100%; max-width:420px;
+    background:var(--accent); border:none; border-radius:var(--radius);
+    color:#080808; font-family:'DM Sans',sans-serif;
+    font-size:15px; font-weight:500;
+    padding:16px; cursor:pointer;
+    transition:opacity 0.15s, transform 0.1s;
+  }
+  .intro-start:hover { opacity:0.88; }
+  .intro-start:active { transform:scale(0.98); }
+
+  .intro-note {
+    margin-top:14px; font-size:11px;
+    color:var(--dimmer); font-family:'DM Mono',monospace;
+    text-align:center; letter-spacing:0.5px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    height:2px;
+    background:var(--border);
+    flex-shrink:0;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .progress-fill {
+    height:100%;
+    background:var(--accent);
+    transition:width 0.6s ease;
+    width:0%;
+  }
+
+  .stage-dots {
+    display:flex; gap:0;
+    padding:8px 16px 6px;
+    background:var(--black);
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+
+  .stage-dot-wrap {
+    flex:1; display:flex; flex-direction:column;
+    align-items:center; gap:4px; position:relative;
+  }
+
+  .stage-dot-wrap:not(:last-child)::after {
+    content:'';
+    position:absolute;
+    top:5px; left:calc(50% + 5px);
+    width:calc(100% - 10px); height:1px;
+    background:var(--border-mid);
+  }
+
+  .stage-dot-wrap.done::after { background:var(--accent-dim); }
+
+  .stage-dot {
+    width:10px; height:10px; border-radius:50%;
+    background:var(--border-mid);
+    border:1px solid var(--border-mid);
+    transition:background 0.4s, border-color 0.4s;
+    position:relative; z-index:1;
+  }
+
+  .stage-dot-wrap.active .stage-dot {
+    background:var(--accent);
+    border-color:var(--accent);
+    box-shadow:0 0 6px rgba(200,241,53,0.5);
+  }
+
+  .stage-dot-wrap.done .stage-dot {
+    background:var(--accent-dim);
+    border-color:var(--accent-dim);
+  }
+
+  .stage-label {
+    font-family:'DM Mono',monospace;
+    font-size:8px; letter-spacing:0.5px;
+    color:var(--dimmer); text-align:center;
+    line-height:1.2;
+    transition:color 0.4s;
+  }
+
+  .stage-dot-wrap.active .stage-label { color:var(--accent); }
+  .stage-dot-wrap.done .stage-label { color:var(--accent-dim); }
+
+  @media(max-width:380px) { .stage-label { font-size:7px; } }
 </style>
 </head>
 <body>
+
+<!-- INTRO SCREEN -->
+<div class="intro-screen" id="intro-screen">
+  <div class="intro-logo">XXXXX</div>
+  <div class="intro-card">
+    <div class="intro-row">
+      <div class="intro-icon">10</div>
+      <div class="intro-text">
+        <strong>Takes 10–15 minutes</strong>
+        <span>This is a real conversation, not a quiz. Answer honestly and it gets more useful.</span>
+      </div>
+    </div>
+    <div class="intro-row">
+      <div class="intro-icon">→</div>
+      <div class="intro-text">
+        <strong>You'll get a coaching profile</strong>
+        <span>A breakdown of what's actually blocking you — not the surface answer — and a personalised action plan.</span>
+      </div>
+    </div>
+    <div class="intro-row">
+      <div class="intro-icon">✦</div>
+      <div class="intro-text">
+        <strong>The more honest, the better</strong>
+        <span>It won't judge you. The only way to get a useful result is to say the real thing.</span>
+      </div>
+    </div>
+  </div>
+  <button class="intro-start" onclick="startFromIntro()">Start my session</button>
+  <div class="intro-note">Requires API key · Enter after this screen</div>
+</div>
 
 <div class="top-line"></div>
 <div class="toast" id="toast"></div>
@@ -214,7 +377,7 @@
   <div class="header-left">
     <span class="wordmark">XXXXX</span>
     <span class="phase-pill" id="phase-label">Onboarding</span>
-    <span class="version-tag">v9</span>
+    <span class="version-tag">v10</span>
   </div>
   <div class="header-right">
     <button class="icon-btn" id="export-btn" onclick="exportChat()">
@@ -230,6 +393,30 @@
     <input class="api-input" id="api-key" type="password" placeholder="API key" autocomplete="off" oninput="checkKey()"/>
   </div>
 </header>
+
+<!-- STAGE PROGRESS -->
+<div class="stage-dots" id="stage-dots">
+  <div class="stage-dot-wrap active" id="stage-1">
+    <div class="stage-dot"></div>
+    <div class="stage-label">Opening</div>
+  </div>
+  <div class="stage-dot-wrap" id="stage-2">
+    <div class="stage-dot"></div>
+    <div class="stage-label">Full Picture</div>
+  </div>
+  <div class="stage-dot-wrap" id="stage-3">
+    <div class="stage-dot"></div>
+    <div class="stage-label">Diagnosis</div>
+  </div>
+  <div class="stage-dot-wrap" id="stage-4">
+    <div class="stage-dot"></div>
+    <div class="stage-label">Mirror</div>
+  </div>
+  <div class="stage-dot-wrap" id="stage-5">
+    <div class="stage-dot"></div>
+    <div class="stage-label">Your Path</div>
+  </div>
+</div>
 
 <div class="messages" id="messages">
   <div class="empty" id="empty-state">
@@ -278,13 +465,15 @@ CONVERSATION FLOW:
 
 PHASE 1 — CURRENT REALITY (2-3 exchanges)
 Open with the real version of what they want to change. Then get specific about their current life — not a general description but actual recent days. What did yesterday look like? The day before? Force specificity early.
+When transitioning to Phase 2, include this exact tag on a new line at the very end of your message (the frontend uses it, the user won't see it): [STAGE:2]
 
 PHASE 2 — FULL PICTURE (3-4 exchanges)
 Ask about ALL goals: "Beyond that — what else are you trying to build or become? Health, relationships, habits, who you want to be — what else is on the list?"
-Then ask about problem areas with this exact phrasing: "Outside of your goals — what parts of your life do you know aren't right?"
-No categories. No prompting. What they volunteer is the data.
+Then ask about problem areas with this exact phrasing: "Outside of those goals — what else would you change about your day-to-day if you could? Could be habits, routines, anything."
+No categories. No prompting. What they volunteer is the data. This framing is aspirational not confessional — people answer more honestly.
 
 PHASE 3 — DIAGNOSIS (3-4 exchanges)
+When transitioning to Phase 3, include [STAGE:3] at the very end of your message.
 For the failure pattern — instead of asking "what stops you", ask them to walk through a specific recent moment: "Think of the last time you had time to work on this and didn't. Walk me through exactly what happened."
 This question cannot be answered with "laziness" — it forces real description.
 
@@ -297,6 +486,7 @@ This is grounded in their words and gives them a direction to answer toward.
 FOLLOW UP ON HIGH VALUE THREADS. When someone mentions something significant — a stale relationship, hours of scrolling, a vice, an abandoned habit — go one level deeper before moving on. One follow-up question. "What does that look like day to day?" or "How long has that been the case?" Don't just log it and move on. These threads often contain the real picture.
 
 PHASE 4 — MIRROR (two segments)
+Include [STAGE:4] at the very end of your first mirror message.
 
 SEGMENT A — THE DIAGNOSIS:
 Reflect back who this person is right now and what is actually in the way. Use their exact words. Connect their current reality, their problem areas, their failure pattern, and their root blocker into one clear narrative. Keep it tight — 4-6 sentences maximum. Name the uncomfortable thing directly.
@@ -314,7 +504,7 @@ Wait for confirmation. Then output the profile and ladder blocks.
 PHASE 5 — COMMIT
 Before the profile and ladder output, ask: "What's one specific thing you'll do tomorrow to actually start?"
 If vague, push once: "More specific — what exactly, and at what time?"
-Accept the second answer. Then output both blocks.
+IMPORTANT: The commit must involve doing or creating something — not consuming. Watching a video, reading, researching — these are not commits. If they give a consumption answer push once: "That's a start — what will you actually do with what you find? What's the first thing you'll create or take action on?" Accept the second answer. Then output both blocks.
 
 CRITICAL RULES:
 
@@ -333,6 +523,8 @@ CIRCLES — CUT AT 2. Pivot after two vague answers on the same point. "Let's co
 NO THERAPY. Cut psychological threads not tied to concrete present blockers. Exception: see SENSITIVE SITUATIONS below.
 
 VAGUE WORDS — PRESS ONCE ONLY. Then move on.
+
+VARY YOUR LANGUAGE. Never use the same phrase twice in a conversation. Rotate these when pressing for depth: "Take a guess.", "What's your gut say?", "What comes to mind first?", "If you had to put words to it?", "What does it feel like, even loosely?". Using the same phrase repeatedly makes the coach feel scripted.
 
 CONTRADICTIONS — NAME ONCE. Move on if unresolved.
 
@@ -404,6 +596,36 @@ let history = [];
 let loading = false;
 let started = false;
 let exchangeCount = 0;
+
+// ── INTRO SCREEN ──
+function startFromIntro() {
+  document.getElementById('intro-screen').style.display = 'none';
+}
+
+// ── STAGE ADVANCEMENT ──
+let currentStage = 1;
+
+function advanceStage(n) {
+  if (n <= currentStage) return;
+  currentStage = n;
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('stage-' + i);
+    if (!el) continue;
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+}
+
+// Strip stage tags from message before displaying
+function stripStageTags(text) {
+  const stageMatch = text.match(/\[STAGE:(\d)\]/);
+  if (stageMatch) {
+    advanceStage(parseInt(stageMatch[1]));
+    text = text.replace(/\[STAGE:\d\]/g, '').trim();
+  }
+  return text;
+}
 
 function checkKey() {
   const key = document.getElementById('api-key').value.trim();
@@ -686,7 +908,7 @@ async function getCoachResponse(userMessage = null) {
 
     if (data.error) { appendMessage('coach', 'Error: ' + data.error.message); setLoading(false); return; }
 
-    const reply = data.content[0].text;
+    const reply = stripStageTags(data.content[0].text);
     processReply(reply);
     history.push({ role: 'assistant', content: reply });
 
@@ -789,7 +1011,14 @@ function showToast(msg) {
 }
 
 function resetConversation() {
-  history = []; started = false; exchangeCount = 0;
+  history = []; started = false; exchangeCount = 0; currentStage = 1;
+  // Reset stage dots
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('stage-' + i);
+    if (!el) continue;
+    el.classList.remove('active', 'done');
+    if (i === 1) el.classList.add('active');
+  }
   document.getElementById('messages').innerHTML = `<div class="empty" id="empty-state"><div class="empty-mark">XXXXX</div><div class="empty-sub">Enter your API key to begin</div></div>`;
   document.getElementById('phase-label').textContent = 'Onboarding';
   document.getElementById('input').value = '';
