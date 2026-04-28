@@ -308,7 +308,7 @@
   <div class="header-left">
     <span class="wordmark">XXXXX</span>
     <span class="phase-pill" id="phase-label">Onboarding</span>
-    <span class="version-tag">v12</span>
+    <span class="version-tag">v13</span>
   </div>
   <div class="header-right">
     <button class="icon-btn" id="export-btn" onclick="exportChat()">
@@ -585,28 +585,31 @@ let msgStartTime = null;
 function appendMessage(role, content, responseMs, isDeep) {
   document.getElementById('empty-state')?.remove();
   const messages = document.getElementById('messages');
-  const wrap = document.createElement('div');
-  wrap.style.display = 'contents';
+
   const msg = document.createElement('div');
   msg.className = `msg ${role}`;
+
   const av = document.createElement('div');
   av.className = `avatar ${role === 'coach' ? 'coach-av' : 'user-av'}`;
   av.textContent = role === 'coach' ? 'XX' : 'YOU';
+
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   bubble.textContent = content;
   if (isDeep && role === 'coach') activateDeepMode(bubble);
+
   msg.appendChild(av);
   msg.appendChild(bubble);
-  wrap.appendChild(msg);
-  // Dev timestamp — always show for coach messages
+  messages.appendChild(msg);
+
+  // Dev timestamp — shown below coach message
   if (responseMs && role === 'coach') {
     const meta = document.createElement('div');
     meta.className = 'msg-meta';
     meta.textContent = (responseMs / 1000).toFixed(1) + 's';
-    wrap.appendChild(meta);
+    messages.appendChild(meta);
   }
-  messages.appendChild(wrap);
+
   scrollBottom();
 }
 
@@ -804,11 +807,16 @@ function processReply(text) {
 }
 
 // ── API CALL ──
+let lastUserMessage = null;
+
 async function getCoachResponse(userMessage = null, isRetry = false) {
   const key = document.getElementById('api-key').value.trim();
   if (!key) return;
 
-  if (userMessage) { history.push({ role: 'user', content: userMessage }); }
+  if (userMessage) {
+    lastUserMessage = userMessage;
+    history.push({ role: 'user', content: userMessage });
+  }
 
   msgStartTime = Date.now();
   setLoading(true); showTyping();
@@ -835,11 +843,12 @@ async function getCoachResponse(userMessage = null, isRetry = false) {
 
     if (data.error) {
       if (!isRetry && (data.error.type === 'overloaded_error' || data.error.status === 529)) {
-        setTimeout(async () => { removeTyping(); await getCoachResponse(null, true); }, 2000);
+        if (lastUserMessage) history.pop();
+        setTimeout(async () => { removeTyping(); await getCoachResponse(lastUserMessage, true); }, 2000);
         return;
       }
       removeTyping();
-      appendMessage('coach', 'Error: ' + data.error.message);
+      appendMessage('coach', 'Error: ' + data.error.message, null, false);
       setLoading(false);
       return;
     }
@@ -849,15 +858,16 @@ async function getCoachResponse(userMessage = null, isRetry = false) {
     history.push({ role: 'assistant', content: reply });
 
   } catch (err) {
-    // Auto-retry once after 2 seconds
+    removeTyping();
     if (!isRetry) {
+      // Auto-retry once — pop last user message from history to avoid duplication
+      if (lastUserMessage) history.pop();
       setTimeout(async () => {
-        removeTyping();
-        await getCoachResponse(null, true);
+        await getCoachResponse(lastUserMessage, true);
       }, 2000);
     } else {
-      removeTyping();
-      appendMessage('coach', 'Connection error. Check your API key and try again.');
+      appendMessage('coach', 'Connection issue — please try sending your message again.', null, false);
+      setLoading(false);
     }
   }
 
@@ -956,7 +966,7 @@ function showToast(msg) {
 }
 
 function resetConversation() {
-  history = []; started = false; exchangeCount = 0;
+  history = []; started = false; exchangeCount = 0; lastUserMessage = null;
 
   document.getElementById('messages').innerHTML = `<div class="empty" id="empty-state"><div class="empty-mark">XXXXX</div><div class="empty-sub">Enter your API key to begin</div></div>`;
   document.getElementById('phase-label').textContent = 'Onboarding';
