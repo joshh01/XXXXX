@@ -765,7 +765,7 @@ function buildLadderCard(raw) {
 }
 
 // ── EXTRACT AND SHOW CARDS ──
-function processReply(text) {
+function processReply(text, responseMs, isDeep) {
   let clean = text;
 
   // Extract ladder first (so profile block is clean)
@@ -785,7 +785,7 @@ function processReply(text) {
   }
 
   // Show remaining text
-  if (clean) appendMessage('coach', clean);
+  if (clean) appendMessage('coach', clean, responseMs, isDeep);
 
   // Show profile card
   if (profileRaw) {
@@ -853,8 +853,9 @@ async function getCoachResponse(userMessage = null, isRetry = false) {
       return;
     }
 
-    const reply = stripDeepTag(data.content[0].text);
-    processReply(reply);
+    const responseMs = Date.now() - msgStartTime;
+    const { text: reply, isDeep } = stripDeepTag(data.content[0].text);
+    processReply(reply, responseMs, isDeep);
     history.push({ role: 'assistant', content: reply });
 
   } catch (err) {
