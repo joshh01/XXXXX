@@ -195,6 +195,29 @@
   }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
+  /* Ladder prompt button */
+  .ladder-prompt {
+    display:flex;
+    justify-content:center;
+    padding:8px 0 4px;
+    animation:fadeUp 0.4s ease both;
+  }
+  .ladder-prompt-btn {
+    background:none;
+    border:1px solid var(--accent-dim);
+    border-radius:var(--radius);
+    color:var(--accent);
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    letter-spacing:1px;
+    padding:10px 20px;
+    cursor:pointer;
+    transition:background 0.2s, color 0.2s;
+  }
+  .ladder-prompt-btn:hover {
+    background:var(--accent-bg);
+  }
+
   .version-tag {
     font-family:'DM Mono',monospace;
     font-size:9px;
@@ -266,10 +289,11 @@
     text-align:center; letter-spacing:0.5px;
   }
 
-  /* Deep question bubble highlight */
+  /* Deep question bubble — warm amber */
   .bubble.deep-bubble {
-    border-color: rgba(200,241,53,0.4) !important;
-    background: linear-gradient(160deg, #141414 55%, rgba(200,241,53,0.05) 100%);
+    border-color: rgba(255,175,50,0.45) !important;
+    background: linear-gradient(160deg, #141414 50%, rgba(255,155,30,0.06) 100%);
+    box-shadow: 0 0 0 1px rgba(255,155,30,0.1);
   }
 
 </style>
@@ -313,7 +337,7 @@
   <div class="header-left">
     <span class="wordmark">XXXXX</span>
     <span class="phase-pill" id="phase-label">Onboarding</span>
-    <span class="version-tag">v15</span>
+    <span class="version-tag">v16</span>
   </div>
   <div class="header-right">
     <button class="icon-btn" id="export-btn" onclick="exportChat()">
@@ -364,6 +388,7 @@ CONVERSATION PHASES:
 
 PHASE 1 — CURRENT REALITY (2-3 exchanges)
 Open with: what are they actually trying to change. Then get specific — walk me through yesterday, what time did you wake up. Force specificity early. Always ask the time when someone describes their morning — wake time is a keystone data point.
+For goals that could be ambivalent (relationship, lifestyle change, leaving a job) — ask early: "Is this something you genuinely want, or something you feel like you should want?" The answer changes everything about how you coach.
 
 PHASE 2 — FULL PICTURE (3-4 exchanges)
 Ask about ALL goals: "Beyond that — what else are you trying to build or become? Health, relationships, habits, who you want to be?"
@@ -388,8 +413,9 @@ SEGMENT A: Reflect current reality, problem areas, failure pattern, root blocker
 End with: "Does that land?"
 
 SEGMENT B (after confirmation): "Good. Here's who you're becoming — and what actually changes this."
-2-3 sentences naming their identity target and the one thing that unlocks the rest.
-End with: "Ready to see your path forward?"
+2-3 sentences naming their identity target using their exact words. Name the one thing that unlocks the rest.
+End with a question that references their specific situation — something like "Ready to see your path forward?" but personalised to what they shared. For example if they mentioned Korea: "Ready to see how we bring the Korea version of you home?" or if they mentioned China: "Ready to build the structure that makes every week feel like China?" Make it specific to them, not generic.
+Wait for confirmation. Ask the commit question. Then output ONLY the PROFILE block first. After the profile renders, the frontend will ask "Ready to see your full action plan?" and the user confirms before the ladder generates.
 
 PHASE 5 — COMMIT
 After confirmation: "What's one specific thing you'll do tomorrow to actually start?"
@@ -407,7 +433,7 @@ CONVERSATION RULES:
 - CONTRADICTIONS — name once, directly. Move on if unresolved.
 - THREAD VALUE — after 2 exchanges, is this revealing blocker, identity, pattern, or goals? If not, cut and move. Low value: minor logistics, small chores. High value: failures, peak moments, identity, vices, relationships.
 - VARY LANGUAGE — never use the same phrase twice. Rotate: "Take a guess." / "What's your gut say?" / "What comes to mind first?" / "If you had to put words to it?"
-- SIGNAL DEEP QUESTIONS — on questions probing fear, identity, peak moments, or root cause, start your message with [DEEP] (stripped by frontend — the user never sees this tag). Do NOT add any text prefix before the question. The question itself should carry the weight. Never signal two deep questions within 3 exchanges of each other.
+- SIGNAL DEEP QUESTIONS — use [DEEP] sparingly. Maximum 3 times per entire conversation. Reserve it only for the single most emotionally significant question in a phase — the one that if answered honestly changes everything. Peak moment question always gets [DEEP]. Identity gap question usually gets [DEEP]. Fear/root cause gets [DEEP] only if it's the deepest moment in the conversation. Start your message with [DEEP] (stripped by frontend). Do NOT add any text prefix. Never use [DEEP] within 4 exchanges of the previous one.
 - NO THERAPY — cut psychological threads not tied to concrete present blockers.
 - NO ADVICE until mirror and commit.
 - FORBIDDEN WORDS: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense, good point, that's worth holding onto.
@@ -422,7 +448,7 @@ MENTAL HEALTH: If serious depression, self-harm, or crisis surfaces — acknowle
 OPENING LINE — say directly, no quotes:
 Before we set any goals or build any plans — tell me what you're actually trying to change. Not the version you'd tell someone to sound good. The real one.
 
-OUTPUT after commit — two blocks in this exact format:
+OUTPUT after commit — output ONLY the profile block first:
 
 ---PROFILE---
 PRIMARY_GOAL: [the goal that changes everything]
@@ -446,7 +472,9 @@ Format each step exactly:
 STEP_1: [action] | WHY: [one sentence] | WHEN: Day 1
 STEP_2: [action] | WHY: [one sentence] | WHEN: Days 2-3
 ...through STEP_7 using WHEN: Week 5-6
----LADDER_END---`;
+---LADDER_END---
+
+The ladder block is output SEPARATELY — only after the frontend triggers a second request with the message "Generate my action plan." When that message arrives, output ONLY the ---LADDER--- block using everything you know about this person from the conversation. Do not repeat the profile.`;
 
 let history = [];
 let loading = false;
@@ -458,10 +486,22 @@ function startFromIntro() {
   document.getElementById('intro-screen').style.display = 'none';
 }
 
-// Strip [DEEP] tag — returns {text, isDeep}
+// Strip [DEEP] tag — returns {text, isDeep} with client-side cooldown
+let lastDeepExchange = -10;
+let deepCount = 0;
+
 function stripDeepTag(text) {
-  const isDeep = text.startsWith('[DEEP]');
-  if (isDeep) text = text.replace('[DEEP]', '').trim();
+  let isDeep = text.startsWith('[DEEP]');
+  if (isDeep) {
+    text = text.replace('[DEEP]', '').trim();
+    // Enforce client-side cooldown — 4 exchange minimum, max 3 total
+    if (exchangeCount - lastDeepExchange < 4 || deepCount >= 3) {
+      isDeep = false; // suppress highlight if too soon or limit reached
+    } else {
+      lastDeepExchange = exchangeCount;
+      deepCount++;
+    }
+  }
   return { text, isDeep };
 }
 
@@ -724,6 +764,8 @@ function processReply(text, responseMs, isDeep) {
     const card = buildProfileCard(profileRaw);
     document.getElementById('messages').appendChild(card);
     document.getElementById('phase-label').textContent = 'Profile built';
+    // Show action plan prompt after profile
+    setTimeout(() => showLadderPrompt(), 600);
   }
 
   // Show ladder card
@@ -904,8 +946,31 @@ function showToast(msg) {
   t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+// ── LADDER PROMPT ──
+function showLadderPrompt() {
+  const messages = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'ladder-prompt';
+  wrap.id = 'ladder-prompt';
+  const btn = document.createElement('button');
+  btn.className = 'ladder-prompt-btn';
+  btn.textContent = 'Show me my action plan →';
+  btn.onclick = requestLadder;
+  wrap.appendChild(btn);
+  messages.appendChild(wrap);
+  scrollBottom();
+}
+
+async function requestLadder() {
+  document.getElementById('ladder-prompt')?.remove();
+  document.getElementById('phase-label').textContent = 'Building plan...';
+  history.push({ role: 'user', content: 'Generate my action plan.' });
+  exchangeCount++;
+  await getCoachResponse(null);
+}
+
 function resetConversation() {
-  history = []; started = false; exchangeCount = 0; lastUserMessage = null;
+  history = []; started = false; exchangeCount = 0; lastUserMessage = null; lastDeepExchange = -10; deepCount = 0;
 
   document.getElementById('messages').innerHTML = `<div class="empty" id="empty-state"><div class="empty-mark">XXXXX</div><div class="empty-sub">Enter your API key to begin</div></div>`;
   document.getElementById('phase-label').textContent = 'Onboarding';
