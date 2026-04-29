@@ -266,7 +266,12 @@
     text-align:center; letter-spacing:0.5px;
   }
 
-  
+  /* Deep question bubble highlight */
+  .bubble.deep-bubble {
+    border-color: rgba(200,241,53,0.4) !important;
+    background: linear-gradient(160deg, #141414 55%, rgba(200,241,53,0.05) 100%);
+  }
+
 </style>
 </head>
 <body>
@@ -308,7 +313,7 @@
   <div class="header-left">
     <span class="wordmark">XXXXX</span>
     <span class="phase-pill" id="phase-label">Onboarding</span>
-    <span class="version-tag">v14</span>
+    <span class="version-tag">v15</span>
   </div>
   <div class="header-right">
     <button class="icon-btn" id="export-btn" onclick="exportChat()">
@@ -364,7 +369,11 @@ PHASE 2 — FULL PICTURE (3-4 exchanges)
 Ask about ALL goals: "Beyond that — what else are you trying to build or become? Health, relationships, habits, who you want to be?"
 Ask about problem areas: "Outside of those goals — what else would you change about your day-to-day if you could?"
 When someone mentions social goals — ask what their current social life actually looks like before moving on.
-No categories. No prompting. What they volunteer is the data.
+After the first problem areas answer, ask two targeted follow-ups to surface hidden issues:
+First: "What about your physical space — your home, your car, your environment — anything there that's off?"
+Then: "Anything you do regularly that you know isn't good for you but haven't mentioned?"
+These surface shame-adjacent issues (messy space, bad habits, vices) that people don't volunteer unprompted.
+No categories beyond these two. What they volunteer is the data.
 
 PHASE 3 — DIAGNOSIS (3-4 exchanges)
 For failure pattern — ask them to walk through a specific recent moment: "Think of the last time you had time to work on this and didn't. Walk me through exactly what happened." Cannot be answered with "laziness."
@@ -391,14 +400,14 @@ Accept the second answer. Output both blocks.
 
 CONVERSATION RULES:
 - ONE question per message. Always. Short. Stop.
-- NO ASSUMPTIONS — never state something as fact unless they said it. Ask to confirm inferences.
+- NO ASSUMPTIONS — never state something as fact unless they said it. Ask to confirm inferences. Never invent or assume specific dates, timeframes, or durations the user hasn't mentioned (e.g. never say "since January" or "for the past year" unless they said it).
 - NATURAL PACING — take as long as needed. Don't rush threads that are producing real answers.
 - PRESS VAGUE WORDS ONCE — "lazy", "motivation", "I guess", "comfortable" get one press for specificity. Then move on.
 - CIRCLES — pivot after two vague answers on the same point. "Let's come at this differently."
 - CONTRADICTIONS — name once, directly. Move on if unresolved.
 - THREAD VALUE — after 2 exchanges, is this revealing blocker, identity, pattern, or goals? If not, cut and move. Low value: minor logistics, small chores. High value: failures, peak moments, identity, vices, relationships.
 - VARY LANGUAGE — never use the same phrase twice. Rotate: "Take a guess." / "What's your gut say?" / "What comes to mind first?" / "If you had to put words to it?"
-- SIGNAL DEEP QUESTIONS — on questions probing fear, identity, peak moments, or root cause, start your message with [DEEP] (stripped by frontend) and prefix the question with ONE of: "Sit with that before you answer." / "Take a moment with this one." / "Don't rush this one." / "There's no quick answer here —". Never combine two phrases.
+- SIGNAL DEEP QUESTIONS — on questions probing fear, identity, peak moments, or root cause, start your message with [DEEP] (stripped by frontend — the user never sees this tag). Do NOT add any text prefix before the question. The question itself should carry the weight. Never signal two deep questions within 3 exchanges of each other.
 - NO THERAPY — cut psychological threads not tied to concrete present blockers.
 - NO ADVICE until mirror and commit.
 - FORBIDDEN WORDS: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense, good point, that's worth holding onto.
@@ -432,9 +441,11 @@ TONE: [direct / steady / encouraging]
 ---LADDER---
 7 personalized steps from where they actually are to their primary goal.
 Rules: Step 1 achievable in 24hrs under 20min. Each step slightly harder. Steps address their specific problem areas — not generic advice. Steps build on each other. Each has a WHY connecting to identity target. Never prescribe lifestyle choices they didn't mention.
+Use these exact timeframe labels in order: Day 1 | Days 2-3 | Days 4-7 | Week 2 | Week 3 | Week 4 | Week 5-6
 Format each step exactly:
-STEP_1: [action] | WHY: [one sentence] | WHEN: [timeframe]
-...through STEP_7
+STEP_1: [action] | WHY: [one sentence] | WHEN: Day 1
+STEP_2: [action] | WHY: [one sentence] | WHEN: Days 2-3
+...through STEP_7 using WHEN: Week 5-6
 ---LADDER_END---`;
 
 let history = [];
@@ -457,11 +468,6 @@ function stripDeepTag(text) {
 function activateDeepMode(bubble) {
   if (!bubble) return;
   bubble.classList.add('deep-bubble');
-  // Add a subtle label above the message text
-  const label = document.createElement('span');
-  label.className = 'deep-label';
-  label.textContent = 'Take a moment';
-  bubble.insertBefore(label, bubble.firstChild);
 }
 
 
