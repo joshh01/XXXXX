@@ -33,89 +33,7 @@
     overflow: hidden;
   }
 
-  /* API KEY GATE */
-  #key-gate {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    z-index: 100;
-    padding: 32px;
-  }
 
-  #key-gate.hidden { display: none; }
-
-  .gate-logo {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    color: var(--accent);
-    margin-bottom: 8px;
-  }
-
-  .gate-sub {
-    font-size: 13px;
-    color: var(--text2);
-    text-align: center;
-    max-width: 320px;
-    line-height: 1.6;
-    margin-bottom: 8px;
-  }
-
-  .gate-input {
-    width: 100%;
-    max-width: 360px;
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    border-radius: 12px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-size: 14px;
-    font-family: monospace;
-    outline: none;
-    letter-spacing: 0.04em;
-    transition: border-color 0.15s;
-  }
-
-  .gate-input:focus { border-color: rgba(255,255,255,0.25); }
-  .gate-input::placeholder { color: var(--text3); font-family: inherit; letter-spacing: 0; }
-
-  .gate-btn {
-    width: 100%;
-    max-width: 360px;
-    background: var(--accent);
-    border: none;
-    border-radius: 12px;
-    padding: 12px;
-    color: #0e0e0e;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
-    transition: opacity 0.15s;
-  }
-
-  .gate-btn:hover { opacity: 0.85; }
-
-  .gate-note {
-    font-size: 11px;
-    color: var(--text3);
-    text-align: center;
-    max-width: 320px;
-    line-height: 1.6;
-  }
-
-  .gate-error {
-    font-size: 12px;
-    color: rgba(255,80,80,0.8);
-    display: none;
-  }
-
-  .gate-error.visible { display: block; }
 
   /* TABS */
   .tab-bar {
@@ -430,16 +348,6 @@
 </head>
 <body>
 
-<!-- API KEY GATE -->
-<div id="key-gate">
-  <div class="gate-logo">5X</div>
-  <div class="gate-sub">Enter your Anthropic API key to start. It's stored in session memory only — never saved, never sent anywhere except the Anthropic API.</div>
-  <input class="gate-input" id="key-input" type="password" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" />
-  <div class="gate-error" id="gate-error">Key looks invalid — should start with sk-ant-</div>
-  <button class="gate-btn" id="key-submit">Start session</button>
-  <div class="gate-note">This key is only used for this browser session and is cleared when you close the tab. Move to a server-side proxy before any public launch.</div>
-</div>
-
 <!-- TABS -->
 <div class="tab-bar">
   <div class="tab active" data-tab="onboarding">Onboarding</div>
@@ -494,8 +402,7 @@
 
 <script>
 // ── STATE ──
-let API_KEY = '';
-const MODEL = 'claude-sonnet-4-6';
+const PROXY = 'https://5-x.vercel.app/api/proxy';
 
 let obHistory = [];
 let ciHistory = [];
@@ -626,16 +533,11 @@ SENSITIVE SITUATIONS: same rules as onboarding apply.`;
 
 // ── API CALL ──
 async function callAPI(system, history, maxTokens) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch(PROXY, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: MODEL,
+      model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
       system: system,
       messages: history
@@ -993,23 +895,7 @@ wireInput('ci-input', 'ci-send', () => {
   ciSend(v);
 });
 
-// ── API KEY GATE ──
-document.getElementById('key-submit').addEventListener('click', () => {
-  const val = document.getElementById('key-input').value.trim();
-  if (!val.startsWith('sk-ant-')) {
-    document.getElementById('gate-error').classList.add('visible');
-    return;
-  }
-  API_KEY = val;
-  sessionStorage.setItem('5x_key', val);
-  document.getElementById('key-gate').classList.add('hidden');
-  bootOnboarding();
-});
-
-document.getElementById('key-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('key-submit').click();
-});
-
+// ── BOOT ──
 function bootOnboarding() {
   lockInput('ob-input', 'ob-send', true);
   setTyping('ob-typing', true);
@@ -1027,15 +913,9 @@ function bootOnboarding() {
   });
 }
 
-// ── BOOT ──
-window.addEventListener('load', () => {
-  const saved = sessionStorage.getItem('5x_key');
-  if (saved && saved.startsWith('sk-ant-')) {
-    API_KEY = saved;
-    document.getElementById('key-gate').classList.add('hidden');
-    bootOnboarding();
-  }
-});
+window.addEventListener('load', bootOnboarding);
+
+
 </script>
 </body>
 </html>
