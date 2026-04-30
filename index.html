@@ -2,920 +2,950 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>5X</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>XXXXX</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
 
   :root {
-    --bg: #0e0e0e;
-    --bg2: #141414;
-    --bg3: #1a1a1a;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --text: #e8e8e8;
-    --text2: rgba(255,255,255,0.45);
-    --text3: rgba(255,255,255,0.25);
-    --accent: #c8f135;
-    --amber: rgba(255,175,50,0.45);
-    --amber-bg: rgba(255,155,30,0.06);
+    --black: #080808;
+    --card: #141414;
+    --border: #1e1e1e;
+    --border-mid: #2a2a2a;
+    --white: #ffffff;
+    --dim: #777777;
+    --dimmer: #444444;
+    --accent: #C8F135;
+    --accent-dim: #8aab22;
+    --accent-bg: rgba(200,241,53,0.06);
+    --accent-border: rgba(200,241,53,0.18);
+    --user-bg: #181818;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --header-h: 56px;
   }
 
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { height:100%; height:-webkit-fill-available; }
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    height:100vh; height:-webkit-fill-available;
+    background:var(--black); color:var(--white);
+    font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.65;
+    overflow:hidden; display:flex; flex-direction:column;
   }
 
+  .top-line { height:2px; background:var(--accent); flex-shrink:0; }
 
-
-  /* TABS */
-  .tab-bar {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    flex-shrink: 0;
-    padding: 0 20px;
+  header {
+    height:var(--header-h); padding:0 16px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    background:var(--black); flex-shrink:0; z-index:20;
   }
-
-  .tab {
-    padding: 14px 20px 13px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text2);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: color 0.15s, border-color 0.15s;
-    letter-spacing: 0.02em;
-    user-select: none;
+  .header-left { display:flex; align-items:center; gap:10px; min-width:0; }
+  .wordmark { font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:4px; color:var(--accent); flex-shrink:0; }
+  .phase-pill {
+    font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px;
+    color:var(--dimmer); background:var(--card); border:1px solid var(--border-mid);
+    border-radius:20px; padding:3px 8px; text-transform:uppercase;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px;
   }
+  .header-right { display:flex; align-items:center; gap:6px; flex-shrink:0; }
 
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab.ready { color: rgba(200,241,53,0.6); }
-
-  .tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-  .tab-panel.active { display: flex; }
-
-  /* CHAT */
-  .chat-wrap {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 0 8px;
-    scroll-behavior: smooth;
+  .icon-btn {
+    background:none; border:1px solid var(--border-mid); border-radius:var(--radius-sm);
+    color:var(--dimmer); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.5px;
+    padding:5px 8px; cursor:pointer; display:flex; align-items:center; gap:4px;
+    transition:border-color 0.2s,color 0.2s; white-space:nowrap; flex-shrink:0;
   }
+  .icon-btn:hover { border-color:var(--accent-dim); color:var(--accent); }
+  .icon-btn.success { border-color:var(--accent); color:var(--accent); }
+  .icon-btn svg { width:11px; height:11px; flex-shrink:0; }
 
-  .chat-wrap::-webkit-scrollbar { width: 4px; }
-  .chat-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .messages {
+    flex:1; overflow-y:auto; overflow-x:hidden;
+    padding:24px 16px 12px;
+    display:flex; flex-direction:column; gap:18px;
+    -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+  }
+  .messages::-webkit-scrollbar { width:3px; }
+  .messages::-webkit-scrollbar-track { background:transparent; }
+  .messages::-webkit-scrollbar-thumb { background:var(--border-mid); border-radius:2px; }
 
-  .msg-row { padding: 2px 24px; display: flex; align-items: flex-start; }
-  .msg-row.user { justify-content: flex-end; }
+  .empty {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    flex:1; gap:10px; opacity:0.3; padding:40px 20px; text-align:center;
+  }
+  .empty-mark { font-family:'DM Mono',monospace; font-size:22px; font-weight:500; letter-spacing:6px; color:var(--accent); }
+  .empty-sub { font-size:12px; color:var(--dim); }
+
+  .msg { display:flex; gap:10px; animation:fadeUp 0.3s ease both; max-width:100%; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg.coach { align-items:flex-start; }
+  .msg.user  { flex-direction:row-reverse; align-items:flex-start; }
+
+  .avatar {
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'DM Mono',monospace; font-size:8px; font-weight:500; letter-spacing:0.5px; margin-top:4px;
+  }
+  .coach-av { background:var(--accent-bg); border:1px solid var(--accent-border); color:var(--accent); }
+  .user-av  { background:var(--card); border:1px solid var(--border-mid); color:var(--dim); }
 
   .bubble {
-    max-width: 78%;
-    padding: 11px 15px;
-    border-radius: 16px;
-    font-size: 14px;
-    line-height: 1.65;
-    border: 1px solid transparent;
-    white-space: pre-wrap;
+    padding:12px 15px; border-radius:var(--radius);
+    max-width:calc(100% - 42px); font-size:15px; line-height:1.65;
+  }
+  @media(min-width:600px){ .bubble{font-size:15.5px;padding:14px 18px;} .messages{padding:28px 24px 14px;} }
+  .msg.coach .bubble { background:var(--card); border:1px solid var(--border); color:var(--white); border-radius:4px var(--radius) var(--radius) var(--radius); }
+  .msg.user  .bubble { background:var(--user-bg); border:1px solid var(--border-mid); color:#cccccc; border-radius:var(--radius) 4px var(--radius) var(--radius); text-align:right; }
+
+  .typing-bubble { background:var(--card); border:1px solid var(--border); border-radius:4px var(--radius) var(--radius) var(--radius); padding:14px 16px; display:flex; gap:5px; align-items:center; }
+  .dot { width:5px; height:5px; background:var(--dimmer); border-radius:50%; animation:blink 1.2s ease-in-out infinite; }
+  .dot:nth-child(2){animation-delay:0.2s} .dot:nth-child(3){animation-delay:0.4s}
+  @keyframes blink { 0%,80%,100%{opacity:0.3;transform:scale(0.85)} 40%{opacity:1;transform:scale(1.05)} }
+
+  /* ── PROFILE CARD ── */
+  .profile-card {
+    background:var(--accent-bg); border:1px solid var(--accent-border);
+    border-radius:var(--radius); padding:18px; margin-top:4px;
+    animation:fadeUp 0.4s ease both;
+  }
+  .profile-card h3 { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--accent); text-transform:uppercase; margin-bottom:16px; }
+  .profile-section { margin-bottom:16px; }
+  .profile-section:last-child { margin-bottom:0; }
+  .section-title { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:2px; color:var(--accent-dim); text-transform:uppercase; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--border-mid); }
+  .profile-row { display:flex; flex-direction:column; gap:2px; margin-bottom:10px; }
+  @media(min-width:500px){ .profile-row{flex-direction:row;gap:10px;align-items:flex-start;} .profile-key{min-width:130px;} }
+  .profile-key { color:var(--dim); font-family:'DM Mono',monospace; font-size:10px; flex-shrink:0; padding-top:1px; }
+  .profile-val { color:#cccccc; font-size:13.5px; line-height:1.55; }
+
+  .identity-statement { font-size:15px; color:#fff; line-height:1.6; font-style:italic; padding:8px 0; }
+
+  .goal-item { background:var(--card); border:1px solid var(--border-mid); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:6px; font-size:13.5px; color:#cccccc; line-height:1.5; }
+  .goal-type { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1.5px; color:var(--accent); text-transform:uppercase; margin-bottom:4px; }
+
+  .problem-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .problem-tag { background:var(--card); border:1px solid var(--border-mid); border-radius:20px; padding:4px 10px; font-size:12px; color:var(--dim); }
+
+  /* ── LADDER ── */
+  .ladder-card {
+    background:var(--black); border:1px solid var(--border-mid);
+    border-radius:var(--radius); padding:18px; margin-top:8px;
+    animation:fadeUp 0.5s ease both;
+  }
+  .ladder-card h3 { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--accent); text-transform:uppercase; margin-bottom:6px; }
+  .ladder-subtitle { font-size:12px; color:var(--dim); margin-bottom:16px; line-height:1.5; }
+
+  .ladder-step {
+    display:flex; gap:12px; align-items:flex-start;
+    padding:12px 0; border-bottom:1px solid var(--border);
+  }
+  .ladder-step:last-child { border-bottom:none; padding-bottom:0; }
+
+  .step-num {
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:500;
+    margin-top:1px;
+  }
+  .step-num.active { background:var(--accent); color:#080808; }
+  .step-num.upcoming { background:var(--card); border:1px solid var(--border-mid); color:var(--dimmer); }
+
+  .step-content { flex:1; }
+  .step-title { font-size:14px; font-weight:500; color:var(--white); margin-bottom:3px; line-height:1.4; }
+  .step-title.active { color:var(--accent); }
+  .step-why { font-size:12.5px; color:var(--dim); line-height:1.5; }
+  .step-timeframe { font-family:'DM Mono',monospace; font-size:10px; color:var(--dimmer); margin-top:4px; letter-spacing:0.5px; }
+
+  /* ── INPUT ── */
+  .input-area { padding:12px 16px; padding-bottom:max(16px,env(safe-area-inset-bottom)); border-top:1px solid var(--border); background:var(--black); flex-shrink:0; }
+  .input-row { display:flex; gap:10px; align-items:flex-end; }
+  textarea {
+    flex:1; background:var(--card); border:1px solid var(--border-mid); border-radius:var(--radius);
+    color:var(--white); font-family:'DM Sans',sans-serif; font-size:16px; line-height:1.5;
+    padding:12px 14px; resize:none; outline:none; min-height:48px; max-height:120px;
+    overflow-y:auto; -webkit-appearance:none; -webkit-overflow-scrolling:touch; transition:border-color 0.2s;
+  }
+  textarea::placeholder { color:var(--dimmer); }
+  .send-btn { width:48px; height:48px; min-width:48px; border-radius:var(--radius); background:var(--accent); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.15s,transform 0.1s; }
+  .send-btn:hover{opacity:0.88} .send-btn:active{transform:scale(0.93)} .send-btn:disabled{opacity:0.25;cursor:not-allowed;transform:none}
+  .send-btn svg { width:18px; height:18px; pointer-events:none; }
+  .hint { margin-top:8px; font-size:11px; color:var(--dimmer); font-family:'DM Mono',monospace; text-align:center; }
+  @media(max-width:360px){.hint{display:none}}
+
+  .toast {
+    position:fixed; bottom:90px; left:50%;
+    transform:translateX(-50%) translateY(10px);
+    background:var(--accent); color:#080808;
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:1px;
+    padding:8px 16px; border-radius:20px; opacity:0;
+    transition:opacity 0.2s,transform 0.2s; pointer-events:none; z-index:100; white-space:nowrap;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* Ladder prompt button */
+  .ladder-prompt {
+    display:flex;
+    justify-content:center;
+    padding:8px 0 4px;
+    animation:fadeUp 0.4s ease both;
+  }
+  .ladder-prompt-btn {
+    background:none;
+    border:1px solid var(--accent-dim);
+    border-radius:var(--radius);
+    color:var(--accent);
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    letter-spacing:1px;
+    padding:10px 20px;
+    cursor:pointer;
+    transition:background 0.2s, color 0.2s;
+  }
+  .ladder-prompt-btn:hover {
+    background:var(--accent-bg);
   }
 
-  .bubble.coach {
-    background: var(--bg2);
-    border-color: var(--border);
-    border-radius: 4px 16px 16px 16px;
-    color: var(--text);
+  .version-tag {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:1px;
+    color:var(--accent-dim);
+    opacity:0.5;
+    flex-shrink:0;
   }
 
-  .bubble.user {
-    background: rgba(200,241,53,0.08);
-    border-color: rgba(200,241,53,0.15);
-    border-radius: 16px 4px 16px 16px;
-    color: var(--text);
+  /* ── INTRO SCREEN ── */
+  .intro-screen {
+    position:fixed; inset:0;
+    background:var(--black);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:32px 24px;
+    z-index:100;
+    animation:fadeUp 0.4s ease both;
   }
 
+  .intro-logo {
+    font-family:'DM Mono',monospace;
+    font-size:28px; font-weight:500;
+    letter-spacing:8px; color:var(--accent);
+    margin-bottom:40px;
+  }
+
+  .intro-card {
+    background:var(--card);
+    border:1px solid var(--border-mid);
+    border-radius:var(--radius);
+    padding:24px;
+    max-width:420px; width:100%;
+    margin-bottom:28px;
+  }
+
+  .intro-row {
+    display:flex; gap:14px; align-items:flex-start;
+    margin-bottom:20px;
+  }
+  .intro-row:last-child { margin-bottom:0; }
+
+  .intro-icon {
+    width:32px; height:32px; border-radius:50%;
+    background:var(--accent-bg); border:1px solid var(--accent-border);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-top:1px;
+    font-family:'DM Mono',monospace; font-size:11px; color:var(--accent);
+  }
+
+  .intro-text { flex:1; }
+  .intro-text strong { display:block; font-size:14px; color:var(--white); margin-bottom:3px; font-weight:500; }
+  .intro-text span { font-size:13px; color:var(--dim); line-height:1.5; }
+
+  .intro-start {
+    width:100%; max-width:420px;
+    background:var(--accent); border:none; border-radius:var(--radius);
+    color:#080808; font-family:'DM Sans',sans-serif;
+    font-size:15px; font-weight:500;
+    padding:16px; cursor:pointer;
+    transition:opacity 0.15s, transform 0.1s;
+  }
+  .intro-start:hover { opacity:0.88; }
+  .intro-start:active { transform:scale(0.98); }
+
+  .intro-note {
+    margin-top:14px; font-size:11px;
+    color:var(--dimmer); font-family:'DM Mono',monospace;
+    text-align:center; letter-spacing:0.5px;
+  }
+
+  /* Deep question bubble — warm amber */
   .bubble.deep-bubble {
-    border-color: var(--amber) !important;
-    background: linear-gradient(160deg, var(--bg2) 50%, var(--amber-bg) 100%);
+    border-color: rgba(255,175,50,0.45) !important;
+    background: linear-gradient(160deg, #141414 50%, rgba(255,155,30,0.06) 100%);
     box-shadow: 0 0 0 1px rgba(255,155,30,0.1);
   }
 
-  .bubble.system-msg {
-    background: transparent;
-    border-color: transparent;
-    color: var(--text3);
-    font-size: 12px;
-    font-style: italic;
-    padding: 4px 0;
-    max-width: 100%;
-  }
-
-  .msg-time {
-    font-size: 10px;
-    color: var(--text3);
-    margin-top: 2px;
-    padding: 0 24px;
-  }
-
-  .msg-time.right { text-align: right; }
-
-  /* CARDS */
-  .profile-card {
-    margin: 10px 24px;
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    border-radius: 12px;
-    padding: 18px 20px;
-  }
-
-  .card-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-
-  .profile-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 8px;
-    align-items: flex-start;
-  }
-
-  .pkey {
-    color: var(--text3);
-    font-size: 12px;
-    min-width: 118px;
-    flex-shrink: 0;
-    padding-top: 1px;
-  }
-
-  .pval { color: var(--text); font-size: 13px; line-height: 1.5; }
-  .pval.accent { color: var(--accent); }
-
-  .ladder-card {
-    margin: 10px 24px;
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .ladder-head {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .ladder-step {
-    padding: 11px 18px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .ladder-step:last-child { border-bottom: none; }
-
-  .step-num {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text2);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .step-num.active {
-    background: rgba(200,241,53,0.1);
-    border-color: rgba(200,241,53,0.3);
-    color: var(--accent);
-  }
-
-  .step-time { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
-  .step-text { font-size: 13px; color: var(--text); line-height: 1.5; }
-  .step-why { font-size: 12px; color: var(--text2); margin-top: 3px; font-style: italic; }
-
-  .action-btn {
-    margin: 4px 24px 12px;
-    background: rgba(200,241,53,0.07);
-    border: 1px solid rgba(200,241,53,0.2);
-    color: var(--accent);
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 13px;
-    cursor: pointer;
-    width: calc(100% - 48px);
-    text-align: left;
-    font-family: inherit;
-    transition: background 0.15s;
-  }
-
-  .action-btn:hover { background: rgba(200,241,53,0.12); }
-
-  /* TYPING */
-  .typing-wrap { display: none; padding: 4px 24px 6px; }
-  .typing-wrap.visible { display: flex; }
-
-  .typing-dots {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 4px 14px 14px 14px;
-    padding: 10px 14px;
-    display: flex;
-    gap: 4px;
-    align-items: center;
-  }
-
-  .dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--text3);
-    animation: blink 1.2s ease-in-out infinite;
-  }
-
-  .dot:nth-child(2) { animation-delay: 0.2s; }
-  .dot:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes blink {
-    0%, 60%, 100% { opacity: 0.3; transform: scale(0.85); }
-    30% { opacity: 1; transform: scale(1); }
-  }
-
-  /* INPUT */
-  .input-area {
-    padding: 10px 20px 16px;
-    border-top: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .input-row { display: flex; gap: 8px; align-items: flex-end; }
-
-  textarea {
-    flex: 1;
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    border-radius: 12px;
-    padding: 10px 14px;
-    color: var(--text);
-    font-size: 14px;
-    font-family: inherit;
-    resize: none;
-    outline: none;
-    line-height: 1.5;
-    min-height: 42px;
-    max-height: 120px;
-    transition: border-color 0.15s;
-  }
-
-  textarea:focus { border-color: rgba(255,255,255,0.2); }
-  textarea::placeholder { color: var(--text3); }
-  textarea:disabled { opacity: 0.4; }
-
-  .send-btn {
-    width: 36px; height: 36px;
-    background: var(--accent);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: opacity 0.15s;
-    margin-bottom: 3px;
-  }
-
-  .send-btn:hover { opacity: 0.85; }
-  .send-btn:disabled { opacity: 0.3; cursor: default; }
-
-  /* CHECK-IN STATUS */
-  .checkin-bar {
-    display: none;
-    padding: 9px 24px;
-    font-size: 12px;
-    color: var(--text2);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .checkin-bar.visible { display: flex; }
-
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: glow 2s ease-in-out infinite;
-  }
-
-  @keyframes glow {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
-  }
-
-  /* NO PROFILE */
-  .no-profile {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    color: var(--text3);
-    font-size: 13px;
-    text-align: center;
-    padding: 40px;
-  }
-
-  .version { position: fixed; bottom: 76px; right: 16px; font-size: 9px; color: var(--text3); pointer-events: none; }
 </style>
 </head>
 <body>
 
-<!-- TABS -->
-<div class="tab-bar">
-  <div class="tab active" data-tab="onboarding">Onboarding</div>
-  <div class="tab" data-tab="checkin" id="checkin-tab">Daily Check-in</div>
+<!-- INTRO SCREEN -->
+<div class="intro-screen" id="intro-screen">
+  <div class="intro-logo">XXXXX</div>
+  <div class="intro-card">
+    <div class="intro-row">
+      <div class="intro-icon">10</div>
+      <div class="intro-text">
+        <strong>Takes 10–15 minutes</strong>
+        <span>This is a real conversation, not a quiz. Answer honestly and it gets more useful.</span>
+      </div>
+    </div>
+    <div class="intro-row">
+      <div class="intro-icon">→</div>
+      <div class="intro-text">
+        <strong>You'll get a coaching profile</strong>
+        <span>A breakdown of what's actually blocking you — not the surface answer — and a personalised action plan.</span>
+      </div>
+    </div>
+    <div class="intro-row">
+      <div class="intro-icon">✦</div>
+      <div class="intro-text">
+        <strong>The more honest, the better</strong>
+        <span>It won't judge you. The only way to get a useful result is to say the real thing.</span>
+      </div>
+    </div>
+  </div>
+  <button class="intro-start" onclick="startFromIntro()">Start my session</button>
+  <div class="intro-note">Requires API key · Enter after this screen</div>
 </div>
 
-<!-- ONBOARDING TAB -->
-<div class="tab-panel active" id="tab-onboarding">
-  <div class="chat-wrap" id="ob-chat"></div>
-  <div class="typing-wrap" id="ob-typing">
-    <div class="typing-dots">
-      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-    </div>
+<div class="top-line"></div>
+<div class="toast" id="toast"></div>
+
+<header>
+  <div class="header-left">
+    <span class="wordmark">XXXXX</span>
+    <span class="phase-pill" id="phase-label">Onboarding</span>
+    <span class="version-tag">v16</span>
   </div>
-  <div class="input-area">
-    <div class="input-row">
-      <textarea id="ob-input" placeholder="Type here..." rows="1"></textarea>
-      <button class="send-btn" id="ob-send">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M2 8h12M10 4l4 4-4 4" stroke="#0e0e0e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
+  <div class="header-right">
+    <button class="icon-btn" id="export-btn" onclick="exportChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Export
+    </button>
+    <button class="icon-btn" onclick="resetConversation()">Reset</button>
+  </div>
+</header>
+
+<div class="messages" id="messages">
+  <div class="empty" id="empty-state">
+    <div class="empty-mark">XXXXX</div>
+    <div class="empty-sub">Enter your API key to begin</div>
   </div>
 </div>
 
-<!-- CHECK-IN TAB -->
-<div class="tab-panel" id="tab-checkin">
-  <div class="checkin-bar" id="ci-bar">
-    <div class="status-dot"></div>
-    <span id="ci-bar-text">Check-in active</span>
+<div class="input-area">
+  <div class="input-row">
+    <textarea id="input" placeholder="Type your response..." rows="1" disabled onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" id="send-btn" onclick="send()" disabled aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#080808" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="19" x2="12" y2="5"/>
+        <polyline points="5 12 12 5 19 12"/>
+      </svg>
+    </button>
   </div>
-  <div class="chat-wrap" id="ci-chat"></div>
-  <div class="typing-wrap" id="ci-typing">
-    <div class="typing-dots">
-      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-    </div>
-  </div>
-  <div class="input-area">
-    <div class="input-row">
-      <textarea id="ci-input" placeholder="Type here..." rows="1"></textarea>
-      <button class="send-btn" id="ci-send">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M2 8h12M10 4l4 4-4 4" stroke="#0e0e0e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
-  </div>
+  <div class="hint" id="hint">Enter API key to begin</div>
 </div>
-
-<div class="version">v17</div>
 
 <script>
-// ── STATE ──
-const PROXY = 'https://5-x.vercel.app/api/proxy';
+const SYSTEM_PROMPT = `You are an accountability coach running a structured onboarding conversation. Build a complete picture of who this person is, who they want to become, and what is actually blocking them.
 
-let obHistory = [];
-let ciHistory = [];
-let profile = null;
-let ladder = null;
-let obPhase = 'chat'; // chat | await_ladder | done
-let ciStarted = false;
-let obDeepCount = 0, obLastDeep = -99, obExchanges = 0;
-let ciDeepCount = 0, ciLastDeep = -99, ciExchanges = 0;
+FIND THESE FIVE THINGS — naturally, never name them to the user:
+1. Real goal underneath the stated one
+2. Root environmental or situational blocker
+3. Historical failure pattern — the specific mechanism, not the label
+4. Identity gap — who they are vs who they want to be, and how that feels
+5. One keystone area reinforcing the problem
 
-// ── SYSTEM PROMPTS ──
+CONVERSATION PHASES:
 
-const OB_SYSTEM = `You are the 5X coach. Your job is to run a diagnostic conversation that uncovers the real blocker — not the stated goal. You are direct, perceptive, and human. You do not flatter. You do not use coaching clichés. You write in short paragraphs, not lists.
+PHASE 1 — CURRENT REALITY (2-3 exchanges)
+Open with: what are they actually trying to change. Then get specific — walk me through yesterday, what time did you wake up. Force specificity early. Always ask the time when someone describes their morning — wake time is a keystone data point.
+For goals that could be ambivalent (relationship, lifestyle change, leaving a job) — ask early: "Is this something you genuinely want, or something you feel like you should want?" The answer changes everything about how you coach.
 
-THE THREE PHASES: Diagnosis → Mirror → Ladder
+PHASE 2 — FULL PICTURE (3-4 exchanges)
+Ask about ALL goals: "Beyond that — what else are you trying to build or become? Health, relationships, habits, who you want to be?"
+Ask about problem areas: "Outside of those goals — what else would you change about your day-to-day if you could?"
+When someone mentions social goals — ask what their current social life actually looks like before moving on.
+After the first problem areas answer, ask two targeted follow-ups to surface hidden issues:
+First: "What about your physical space — your home, your car, your environment — anything there that's off?"
+Then: "Anything you do regularly that you know isn't good for you but haven't mentioned?"
+These surface shame-adjacent issues (messy space, bad habits, vices) that people don't volunteer unprompted.
+No categories beyond these two. What they volunteer is the data.
 
-FIVE SIGNALS TO UNCOVER (in order):
-1. Real goal underneath the stated goal
-2. Root environmental blocker
-3. Historical failure pattern
-4. Identity gap — who they are vs who they want to be
-5. Keystone area — the one change that unlocks everything else
+PHASE 3 — DIAGNOSIS (3-4 exchanges)
+For failure pattern — ask them to walk through a specific recent moment: "Think of the last time you had time to work on this and didn't. Walk me through exactly what happened." Cannot be answered with "laziness."
+For peak moment: "When in your life did things feel right — when you were actually moving? Walk me through what that period was like." Then ask how it felt, not just what happened.
+Connect goals to identity: "The [goal], the [other goal] — you said [their words]. What does the person who has all of this figured out actually look like to you?"
+Before the mirror — if the primary goal hasn't been revisited since Phase 1, ask one question about where they stand on it now.
+Follow up one level deeper on high-value threads: relationships, vices, abandoned habits, peak moments. One follow-up question before moving on.
+When someone says "not sure" about a life transition — push once: "What changed specifically about your days when that happened?"
+
+PHASE 4 — MIRROR (two segments)
+SEGMENT A: Reflect current reality, problem areas, failure pattern, root blocker. 4-6 sentences maximum. Use their exact words. Name the uncomfortable thing directly.
+End with: "Does that land?"
+
+SEGMENT B (after confirmation): "Good. Here's who you're becoming — and what actually changes this."
+2-3 sentences naming their identity target using their exact words. Name the one thing that unlocks the rest.
+End with a question that references their specific situation — something like "Ready to see your path forward?" but personalised to what they shared. For example if they mentioned Korea: "Ready to see how we bring the Korea version of you home?" or if they mentioned China: "Ready to build the structure that makes every week feel like China?" Make it specific to them, not generic.
+Wait for confirmation. Ask the commit question. Then output ONLY the PROFILE block first. After the profile renders, the frontend will ask "Ready to see your full action plan?" and the user confirms before the ladder generates.
+
+PHASE 5 — COMMIT
+After confirmation: "What's one specific thing you'll do tomorrow to actually start?"
+Push once if vague: "More specific — what exactly, and at what time?"
+Push once if consumption (watching, reading, researching): "That's a start — what will you actually do with what you find?"
+Push once if organizational/setup (creating folders, making plans): "Good start — what's the first actual thing you'll build from that?"
+Accept the second answer. Output both blocks.
 
 CONVERSATION RULES:
-- Open with a single direct question: what they want to change and why now.
-- Never ask two questions in one message. One question, full stop.
-- Never use: accountable, journey, mindset, authentic, potential, actionable.
-- Keep responses short. 2–4 sentences max during diagnosis. Never lecture.
-- Mirror their exact language back. If they say "drained" — use that word.
-- The presenting problem is never the real problem. Keep digging until you find the environmental or identity root.
-- When you have enough on all five signals, surface the mirror.
-
-DEEP QUESTIONS:
-- Signal with [DEEP] at the very start of your message (stripped by frontend — user never sees it).
-- Maximum 3 times per entire conversation. Reserve for: peak moment, identity gap, root fear.
-- Never use [DEEP] within 4 exchanges of the previous one.
-- No prefix text before the question. The question carries its own weight.
-
-MIRROR FORMAT — output when diagnosis is complete:
----MIRROR---
-Segment A (4–6 sentences in their exact language — reflect the real goal, the blocker, the failure pattern. No advice. Make them feel seen.)
-
-Segment B (identity reframe and path forward — personalised to what they shared. End with a bridge question: e.g. "Ready to build the structure that makes every week feel like China?")
----MIRROR_END---
-
-After mirror output, pause. Wait for confirmation. Then ask the commit question: what is the one specific action they will do today — not tomorrow — with a time attached.
-
-Commit quality rules:
-- Must be an action, not setup or consumption
-- Must have a specific time attached
-- Push back if vague: "What time exactly?" or "What's the first action, not the plan?"
-
-After commit is confirmed, output ONLY the profile block:
-
----PROFILE---
-NAME: [first name]
-STATED_GOAL: [one sentence]
-REAL_GOAL: [the deeper goal underneath]
-ROOT_BLOCKER: [environmental or structural root cause]
-FAILURE_PATTERN: [how they historically fall off]
-IDENTITY_GAP: [who they are vs who they want to be, specific]
-PEAK_MOMENT: [a specific time they were the person they want to be]
-KEYSTONE: [the one area that unlocks the rest]
-COACHING_TONE: [direct | firm | gentle | analytical]
-ACTIVE_STEP: [their commit from this conversation]
----PROFILE_END---
-
-The ladder block is output SEPARATELY — only when the frontend sends "Generate my action plan." Output ONLY:
-
----LADDER---
-STEP_1 | Day 1 | [specific action] | WHY: [reason tied to their root blocker]
-STEP_2 | Days 2–3 | [action] | WHY: [reason]
-STEP_3 | Days 4–7 | [action] | WHY: [reason]
-STEP_4 | Week 2 | [action] | WHY: [reason]
-STEP_5 | Week 3 | [action] | WHY: [reason]
-STEP_6 | Week 4 | [action] | WHY: [reason]
-STEP_7 | Weeks 5–6 | [action] | WHY: [reason]
----LADDER_END---
-
-Each step must address their specific failure pattern and root blocker. Each must be concrete enough to do or fail clearly. No motivational filler.
+- ONE question per message. Always. Short. Stop.
+- NO ASSUMPTIONS — never state something as fact unless they said it. Ask to confirm inferences. Never invent or assume specific dates, timeframes, or durations the user hasn't mentioned (e.g. never say "since January" or "for the past year" unless they said it).
+- NATURAL PACING — take as long as needed. Don't rush threads that are producing real answers.
+- PRESS VAGUE WORDS ONCE — "lazy", "motivation", "I guess", "comfortable" get one press for specificity. Then move on.
+- CIRCLES — pivot after two vague answers on the same point. "Let's come at this differently."
+- CONTRADICTIONS — name once, directly. Move on if unresolved.
+- THREAD VALUE — after 2 exchanges, is this revealing blocker, identity, pattern, or goals? If not, cut and move. Low value: minor logistics, small chores. High value: failures, peak moments, identity, vices, relationships.
+- VARY LANGUAGE — never use the same phrase twice. Rotate: "Take a guess." / "What's your gut say?" / "What comes to mind first?" / "If you had to put words to it?"
+- SIGNAL DEEP QUESTIONS — use [DEEP] sparingly. Maximum 3 times per entire conversation. Reserve it only for the single most emotionally significant question in a phase — the one that if answered honestly changes everything. Peak moment question always gets [DEEP]. Identity gap question usually gets [DEEP]. Fear/root cause gets [DEEP] only if it's the deepest moment in the conversation. Start your message with [DEEP] (stripped by frontend). Do NOT add any text prefix. Never use [DEEP] within 4 exchanges of the previous one.
+- NO THERAPY — cut psychological threads not tied to concrete present blockers.
+- NO ADVICE until mirror and commit.
+- FORBIDDEN WORDS: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense, good point, that's worth holding onto.
+- NEVER identify as AI or system.
+- TONE: Direct, calm, unhurried. 2-3 sentences max until mirror.
 
 SENSITIVE SITUATIONS:
-- Relationships: reflect, never prescribe.
-- Abuse or danger: stop everything, provide one resource, ask if they want to continue.
-- Mental health crisis: acknowledge, one resource, be human first, do not coach.`;
+RELATIONSHIPS: Never suggest ending one. Reflect what they said, ask what they want from it: "You described it as [their words] — what would it look like if it was working?"
+ABUSE/DANGER: Stop the coaching conversation. Acknowledge warmly. Provide one resource: National Domestic Violence Hotline 1-800-799-7233. Ask if they want to continue or speak to a specialist.
+MENTAL HEALTH: If serious depression, self-harm, or crisis surfaces — acknowledge, provide one relevant resource, ask how they're doing right now. Be human first.
 
-function buildCISystem(p, l) {
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  let ladderText = '';
-  if (l && l.length) {
-    ladderText = '\n\nTHEIR LADDER:\n' + l.map((s, i) => `Step ${i+1} (${s.time}): ${s.text}`).join('\n');
+OPENING LINE — say directly, no quotes:
+Before we set any goals or build any plans — tell me what you're actually trying to change. Not the version you'd tell someone to sound good. The real one.
+
+OUTPUT after commit — output ONLY the profile block first:
+
+---PROFILE---
+PRIMARY_GOAL: [the goal that changes everything]
+SUPPORTING_GOALS: [other goals separated by | pipe]
+IDENTITY_TARGET: [who they are becoming — one sentence, their words]
+PROBLEM_AREAS: [what they said isn't working, separated by | pipe, their exact words]
+ROOT_CAUSE: [actual blocker]
+FAILURE_PATTERN: [specific breakdown mechanism]
+IDENTITY_GAP: [who they are vs who they want to be]
+PEAK_MOMENT: [specific time they felt locked in — their words]
+KEYSTONE: [one area to fix first and why]
+FIRST_ACTION: [their specific commit with time]
+TONE: [direct / steady / encouraging]
+---END---
+
+---LADDER---
+7 personalized steps from where they actually are to their primary goal.
+Rules: Step 1 achievable in 24hrs under 20min. Each step slightly harder. Steps address their specific problem areas — not generic advice. Steps build on each other. Each has a WHY connecting to identity target. Never prescribe lifestyle choices they didn't mention.
+Use these exact timeframe labels in order: Day 1 | Days 2-3 | Days 4-7 | Week 2 | Week 3 | Week 4 | Week 5-6
+Format each step exactly:
+STEP_1: [action] | WHY: [one sentence] | WHEN: Day 1
+STEP_2: [action] | WHY: [one sentence] | WHEN: Days 2-3
+...through STEP_7 using WHEN: Week 5-6
+---LADDER_END---
+
+The ladder block is output SEPARATELY — only after the frontend triggers a second request with the message "Generate my action plan." When that message arrives, output ONLY the ---LADDER--- block using everything you know about this person from the conversation. Do not repeat the profile.`;
+
+let history = [];
+let loading = false;
+let started = false;
+let exchangeCount = 0;
+
+// ── INTRO SCREEN ──
+function startFromIntro() {
+  document.getElementById('intro-screen').style.display = 'none';
+}
+
+// Strip [DEEP] tag — returns {text, isDeep} with client-side cooldown
+let lastDeepExchange = -10;
+let deepCount = 0;
+
+function stripDeepTag(text) {
+  let isDeep = text.startsWith('[DEEP]');
+  if (isDeep) {
+    text = text.replace('[DEEP]', '').trim();
+    // Enforce client-side cooldown — 4 exchange minimum, max 3 total
+    if (exchangeCount - lastDeepExchange < 4 || deepCount >= 3) {
+      isDeep = false; // suppress highlight if too soon or limit reached
+    } else {
+      lastDeepExchange = exchangeCount;
+      deepCount++;
+    }
   }
-  return `You are the 5X coach running a daily check-in. Today is ${today}.
+  return { text, isDeep };
+}
 
-THEIR PROFILE:
-- Name: ${p.NAME || 'them'}
-- Real goal: ${p.REAL_GOAL || p.STATED_GOAL || ''}
-- Root blocker: ${p.ROOT_BLOCKER || ''}
-- Failure pattern: ${p.FAILURE_PATTERN || ''}
-- Identity gap: ${p.IDENTITY_GAP || ''}
-- Peak moment: ${p.PEAK_MOMENT || ''}
-- Keystone area: ${p.KEYSTONE || ''}
-- Active commitment: ${p.ACTIVE_STEP || ''}
-- Coaching tone: ${p.COACHING_TONE || 'direct'}${ladderText}
+function activateDeepMode(bubble) {
+  if (!bubble) return;
+  bubble.classList.add('deep-bubble');
+}
 
-CHECK-IN RULES:
-- You already know who they are. Do not introduce yourself or re-explain 5X.
-- Open with ONE direct question referencing their specific commitment (${p.ACTIVE_STEP || 'their last commitment'}). Not "how are you doing?"
-- Keep the entire check-in to 5–8 exchanges. This is a check-in, not a new onboarding.
-- Affirm wins directly and briefly. One sentence.
-- When they report a failure: do not shame. Probe once for the environmental cause, then move forward.
-- Reference their failure pattern when relevant — this shows you remember them.
-- Reference their peak moment when they need a reference point for who they can be.
-- End with one specific forward commitment for today or tomorrow: action, not consumption, specific time attached.
-- After the forward commit is confirmed, output:
 
----CHECKIN_CLOSE---
-WIN: [one-line summary of what they acknowledged or did well]
-CHALLENGE: [honest one-line on what they're working through]
-NEXT: [the specific commit they just made with time]
----CHECKIN_CLOSE_END---
 
-DEEP QUESTIONS:
-- [DEEP] tag available — same rules. Max 3 per session. Only for moments that matter.
+function checkKey() {
+  // API key now handled server-side via proxy — auto-start
+  if (!started) {
+    document.getElementById('input').disabled = false;
+    document.getElementById('send-btn').disabled = false;
+    const hint = document.getElementById('hint');
+    if (hint) hint.textContent = 'Enter to send · Shift+Enter for new line';
+    document.getElementById('empty-state')?.remove();
+  }
+}
 
-SENSITIVE SITUATIONS: same rules as onboarding apply.`;
+async function startConversation() {
+  started = true;
+  await getCoachResponse();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!loading) send(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+let msgStartTime = null;
+
+function appendMessage(role, content, responseMs, isDeep) {
+  document.getElementById('empty-state')?.remove();
+  const messages = document.getElementById('messages');
+
+  const msg = document.createElement('div');
+  msg.className = `msg ${role}`;
+
+  const av = document.createElement('div');
+  av.className = `avatar ${role === 'coach' ? 'coach-av' : 'user-av'}`;
+  av.textContent = role === 'coach' ? 'XX' : 'YOU';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = content;
+  if (isDeep && role === 'coach') activateDeepMode(bubble);
+
+  msg.appendChild(av);
+  msg.appendChild(bubble);
+  messages.appendChild(msg);
+
+  // Dev timestamp — shown below coach message
+  if (responseMs && role === 'coach') {
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.textContent = (responseMs / 1000).toFixed(1) + 's';
+    messages.appendChild(meta);
+  }
+
+  scrollBottom();
+}
+
+function scrollBottom() {
+  const m = document.getElementById('messages');
+  m.scrollTop = m.scrollHeight;
+}
+
+function showTyping() {
+  const messages = document.getElementById('messages');
+  const msg = document.createElement('div');
+  msg.className = 'msg coach'; msg.id = 'typing';
+  const av = document.createElement('div');
+  av.className = 'avatar coach-av'; av.textContent = 'XX';
+  const b = document.createElement('div');
+  b.className = 'typing-bubble';
+  b.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  msg.appendChild(av); msg.appendChild(b);
+  messages.appendChild(msg); scrollBottom();
+}
+
+function removeTyping() { document.getElementById('typing')?.remove(); }
+
+// ── PROFILE CARD ──
+function buildProfileCard(raw) {
+  const fields = {};
+  raw.split('\n').forEach(line => {
+    const idx = line.indexOf(':');
+    if (idx > -1) {
+      const key = line.slice(0, idx).trim();
+      const val = line.slice(idx + 1).trim();
+      if (key && val) fields[key] = val;
+    }
+  });
+
+  const card = document.createElement('div');
+  card.className = 'profile-card'; card.id = 'profile-card';
+
+  const title = document.createElement('h3');
+  title.textContent = 'Coaching profile';
+  card.appendChild(title);
+
+  if (fields.IDENTITY_TARGET) {
+    const s = document.createElement('div'); s.className = 'profile-section';
+    const t = document.createElement('div'); t.className = 'section-title'; t.textContent = 'Identity target';
+    const v = document.createElement('div'); v.className = 'identity-statement';
+    v.textContent = '\u201C' + fields.IDENTITY_TARGET + '\u201D';
+    s.appendChild(t); s.appendChild(v); card.appendChild(s);
+  }
+
+  // Goals
+  const gs = document.createElement('div'); gs.className = 'profile-section';
+  const gt = document.createElement('div'); gt.className = 'section-title'; gt.textContent = 'Goals';
+  gs.appendChild(gt);
+  if (fields.PRIMARY_GOAL) {
+    const g = document.createElement('div'); g.className = 'goal-item';
+    const tp = document.createElement('div'); tp.className = 'goal-type'; tp.textContent = 'Primary';
+    g.appendChild(tp); g.appendChild(document.createTextNode(fields.PRIMARY_GOAL)); gs.appendChild(g);
+  }
+  if (fields.SUPPORTING_GOALS) {
+    fields.SUPPORTING_GOALS.split('|').forEach(goal => {
+      const g = document.createElement('div'); g.className = 'goal-item';
+      const tp = document.createElement('div'); tp.className = 'goal-type'; tp.textContent = 'Supporting';
+      g.appendChild(tp); g.appendChild(document.createTextNode(goal.trim())); gs.appendChild(g);
+    });
+  }
+  card.appendChild(gs);
+
+  // Problem areas
+  if (fields.PROBLEM_AREAS) {
+    const ps = document.createElement('div'); ps.className = 'profile-section';
+    const pt = document.createElement('div'); pt.className = 'section-title'; pt.textContent = 'Problem areas';
+    ps.appendChild(pt);
+    const tags = document.createElement('div'); tags.className = 'problem-tags';
+    fields.PROBLEM_AREAS.split('|').forEach(p => {
+      const tag = document.createElement('span'); tag.className = 'problem-tag'; tag.textContent = p.trim(); tags.appendChild(tag);
+    });
+    ps.appendChild(tags); card.appendChild(ps);
+  }
+
+  // Diagnosis
+  const ds = document.createElement('div'); ds.className = 'profile-section';
+  const dt = document.createElement('div'); dt.className = 'section-title'; dt.textContent = 'Diagnosis';
+  ds.appendChild(dt);
+  [['ROOT_CAUSE','Root cause'],['FAILURE_PATTERN','Failure pattern'],['IDENTITY_GAP','Identity gap'],['PEAK_MOMENT','Peak moment'],['KEYSTONE','First target']].forEach(([k,l]) => {
+    if (!fields[k]) return;
+    const row = document.createElement('div'); row.className = 'profile-row';
+    row.innerHTML = `<span class="profile-key">${l}</span><span class="profile-val">${fields[k]}</span>`;
+    ds.appendChild(row);
+  });
+  card.appendChild(ds);
+
+  // First action
+  if (fields.FIRST_ACTION) {
+    const cs = document.createElement('div'); cs.className = 'profile-section';
+    const ct = document.createElement('div'); ct.className = 'section-title'; ct.textContent = 'First commitment';
+    const cv = document.createElement('div');
+    cv.style.cssText = 'font-size:14px;color:var(--accent);line-height:1.6;padding-top:4px;';
+    cv.textContent = fields.FIRST_ACTION; cs.appendChild(ct); cs.appendChild(cv); card.appendChild(cs);
+  }
+
+  if (fields.TONE) {
+    const row = document.createElement('div'); row.className = 'profile-row'; row.style.marginTop = '4px';
+    row.innerHTML = `<span class="profile-key">Coaching tone</span><span class="profile-val">${fields.TONE}</span>`;
+    card.appendChild(row);
+  }
+
+  return card;
+}
+
+// ── LADDER CARD ──
+function buildLadderCard(raw) {
+  const steps = [];
+  raw.split('\n').forEach(line => {
+    const match = line.match(/^STEP_(\d+):\s*(.+?)\s*\|\s*WHY:\s*(.+?)\s*\|\s*WHEN:\s*(.+)$/i);
+    if (match) {
+      steps.push({ num: parseInt(match[1]), action: match[2].trim(), why: match[3].trim(), when: match[4].trim() });
+    }
+  });
+
+  if (steps.length === 0) return null;
+
+  const card = document.createElement('div');
+  card.className = 'ladder-card'; card.id = 'ladder-card';
+
+  const title = document.createElement('h3'); title.textContent = 'Your path forward';
+  const sub = document.createElement('div'); sub.className = 'ladder-subtitle';
+  sub.textContent = 'A sequence built around where you actually are — not where you want to be. Complete these in order.';
+  card.appendChild(title); card.appendChild(sub);
+
+  steps.forEach((step, i) => {
+    const row = document.createElement('div'); row.className = 'ladder-step';
+
+    const num = document.createElement('div');
+    num.className = `step-num ${i === 0 ? 'active' : 'upcoming'}`;
+    num.textContent = step.num;
+
+    const content = document.createElement('div'); content.className = 'step-content';
+
+    const stitle = document.createElement('div');
+    stitle.className = `step-title${i === 0 ? ' active' : ''}`;
+    stitle.textContent = step.action;
+
+    const why = document.createElement('div'); why.className = 'step-why'; why.textContent = step.why;
+    const when = document.createElement('div'); when.className = 'step-timeframe'; when.textContent = step.when;
+
+    content.appendChild(stitle); content.appendChild(why); content.appendChild(when);
+    row.appendChild(num); row.appendChild(content);
+    card.appendChild(row);
+  });
+
+  return card;
+}
+
+// ── EXTRACT AND SHOW CARDS ──
+function processReply(text, responseMs, isDeep) {
+  let clean = text;
+
+  // Extract ladder first (so profile block is clean)
+  const ladderMatch = clean.match(/---LADDER---([\s\S]*?)---LADDER_END---/);
+  let ladderRaw = null;
+  if (ladderMatch) {
+    ladderRaw = ladderMatch[1].trim();
+    clean = clean.replace(/---LADDER---([\s\S]*?)---LADDER_END---/, '').trim();
+  }
+
+  // Extract profile
+  const profileMatch = clean.match(/---PROFILE---([\s\S]*?)---END---/);
+  let profileRaw = null;
+  if (profileMatch) {
+    profileRaw = profileMatch[1].trim();
+    clean = clean.replace(/---PROFILE---([\s\S]*?)---END---/, '').trim();
+  }
+
+  // Show remaining text
+  if (clean) appendMessage('coach', clean, responseMs, isDeep);
+
+  // Show profile card
+  if (profileRaw) {
+    const card = buildProfileCard(profileRaw);
+    document.getElementById('messages').appendChild(card);
+    document.getElementById('phase-label').textContent = 'Profile built';
+    // Show action plan prompt after profile
+    setTimeout(() => showLadderPrompt(), 600);
+  }
+
+  // Show ladder card
+  if (ladderRaw) {
+    const card = buildLadderCard(ladderRaw);
+    if (card) {
+      document.getElementById('messages').appendChild(card);
+      document.getElementById('phase-label').textContent = 'Path ready';
+    }
+  }
+
+  if (profileRaw || ladderRaw) scrollBottom();
 }
 
 // ── API CALL ──
-async function callAPI(system, history, maxTokens) {
-  const res = await fetch(PROXY, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: maxTokens,
-      system: system,
-      messages: history
-    })
-  });
-  const data = await res.json();
-  if (!res.ok || data.error) {
-    const msg = data.error?.message || `HTTP ${res.status}`;
-    console.error('API error:', msg, data);
-    throw new Error(msg);
+let lastUserMessage = null;
+
+async function getCoachResponse(userMessage = null, isRetry = false) {
+  if (userMessage) {
+    lastUserMessage = userMessage;
+    history.push({ role: 'user', content: userMessage });
   }
-  return data.content?.[0]?.text || '';
+
+  msgStartTime = Date.now();
+  setLoading(true); showTyping();
+
+  try {
+    const res = await fetch('https://5-x.vercel.app/api/proxy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        system: [
+          {
+            type: "text",
+            text: SYSTEM_PROMPT,
+            cache_control: { type: "ephemeral" }
+          }
+        ],
+        messages: history.length > 0 ? history : [{ role: 'user', content: 'Begin the onboarding.' }]
+      })
+    });
+
+    const data = await res.json();
+    removeTyping();
+
+    if (data.error) {
+      if (!isRetry && (data.error.type === 'overloaded_error' || data.error.status === 529)) {
+        if (lastUserMessage) history.pop();
+        setTimeout(async () => { removeTyping(); await getCoachResponse(lastUserMessage, true); }, 2000);
+        return;
+      }
+      removeTyping();
+      appendMessage('coach', 'Error: ' + data.error.message, null, false);
+      setLoading(false);
+      return;
+    }
+
+    const responseMs = Date.now() - msgStartTime;
+    const { text: reply, isDeep } = stripDeepTag(data.content[0].text);
+    processReply(reply, responseMs, isDeep);
+    history.push({ role: 'assistant', content: reply });
+
+  } catch (err) {
+    removeTyping();
+    if (!isRetry) {
+      // Auto-retry once — pop last user message from history to avoid duplication
+      if (lastUserMessage) history.pop();
+      setTimeout(async () => {
+        await getCoachResponse(lastUserMessage, true);
+      }, 2000);
+    } else {
+      appendMessage('coach', 'Connection issue — please try sending your message again.', null, false);
+      setLoading(false);
+    }
+  }
+
+  setLoading(false);
 }
 
-// ── DOM HELPERS ──
-function ts() {
-  return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+async function send() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text || loading) return;
+  input.value = ''; input.style.height = 'auto';
+  appendMessage('user', text);
+  exchangeCount++;
+  await getCoachResponse(text);
 }
 
-function scrollDown(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollTop = el.scrollHeight;
+function setLoading(val) {
+  loading = val;
+  document.getElementById('send-btn').disabled = val;
 }
 
-function addBubble(chatId, role, text, deep = false) {
-  const chat = document.getElementById(chatId);
-  const row = document.createElement('div');
-  row.className = 'msg-row' + (role === 'user' ? ' user' : '');
-  const bub = document.createElement('div');
-  bub.className = 'bubble ' + (role === 'user' ? 'user' : 'coach');
-  if (deep) bub.classList.add('deep-bubble');
-  bub.textContent = text;
-  row.appendChild(bub);
-  chat.appendChild(row);
-  const t = document.createElement('div');
-  t.className = 'msg-time' + (role === 'user' ? ' right' : '');
-  t.textContent = ts();
-  chat.appendChild(t);
-  scrollDown(chatId);
+// ── EXPORT ──
+function exportChat() {
+  if (history.length === 0) { showToast('Nothing to export yet'); return; }
+
+  const lines = ['XXXXX — Onboarding Session', 'Exported: ' + new Date().toLocaleString(), '='.repeat(44), ''];
+
+  history.forEach(msg => {
+    const role = msg.role === 'assistant' ? 'COACH' : 'YOU';
+    const content = msg.content
+      .replace(/---PROFILE---([\s\S]*?)---END---/, '')
+      .replace(/---LADDER---([\s\S]*?)---LADDER_END---/, '')
+      .trim();
+    if (content) { lines.push(role + ':'); lines.push(content); lines.push(''); }
+  });
+
+  const profileCard = document.getElementById('profile-card');
+  if (profileCard) {
+    lines.push('='.repeat(44)); lines.push('COACHING PROFILE'); lines.push('');
+    profileCard.querySelectorAll('.goal-item').forEach(g => {
+      const type = g.querySelector('.goal-type')?.textContent || '';
+      const val = Array.from(g.childNodes).filter(n => n.nodeType === 3).map(n => n.textContent.trim()).join('').trim();
+      if (val) lines.push(type + ' GOAL: ' + val);
+    });
+    profileCard.querySelectorAll('.profile-row').forEach(row => {
+      const k = row.querySelector('.profile-key')?.textContent || '';
+      const v = row.querySelector('.profile-val')?.textContent || '';
+      if (k && v) lines.push(k.toUpperCase() + ': ' + v);
+    });
+  }
+
+  const ladderCard = document.getElementById('ladder-card');
+  if (ladderCard) {
+    lines.push(''); lines.push('='.repeat(44)); lines.push('GOAL LADDER'); lines.push('');
+    ladderCard.querySelectorAll('.ladder-step').forEach(step => {
+      const num = step.querySelector('.step-num')?.textContent || '';
+      const title = step.querySelector('.step-title')?.textContent || '';
+      const why = step.querySelector('.step-why')?.textContent || '';
+      const when = step.querySelector('.step-timeframe')?.textContent || '';
+      if (title) lines.push(`Step ${num}: ${title}`);
+      if (why) lines.push(`  Why: ${why}`);
+      if (when) lines.push(`  When: ${when}`);
+      lines.push('');
+    });
+  }
+
+  const text = lines.join('\n');
+  if (navigator.share) {
+    navigator.share({ title: 'XXXXX Onboarding', text }).catch(() => copyToClipboard(text));
+  } else {
+    copyToClipboard(text);
+  }
 }
 
-function addSystem(chatId, text) {
-  const chat = document.getElementById(chatId);
-  const row = document.createElement('div');
-  row.className = 'msg-row';
-  const bub = document.createElement('div');
-  bub.className = 'bubble system-msg';
-  bub.textContent = text;
-  row.appendChild(bub);
-  chat.appendChild(row);
-  scrollDown(chatId);
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Copied to clipboard');
+      const btn = document.getElementById('export-btn');
+      btn.classList.add('success');
+      setTimeout(() => btn.classList.remove('success'), 2000);
+    }).catch(() => downloadTxt(text));
+  } else { downloadTxt(text); }
 }
 
-function addHTML(chatId, html) {
-  const chat = document.getElementById(chatId);
+function downloadTxt(text) {
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+  a.download = 'xxxxx-session-' + Date.now() + '.txt';
+  a.click(); showToast('Downloaded');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg;
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── LADDER PROMPT ──
+function showLadderPrompt() {
+  const messages = document.getElementById('messages');
   const wrap = document.createElement('div');
-  wrap.innerHTML = html;
-  chat.appendChild(wrap);
-  scrollDown(chatId);
+  wrap.className = 'ladder-prompt';
+  wrap.id = 'ladder-prompt';
+  const btn = document.createElement('button');
+  btn.className = 'ladder-prompt-btn';
+  btn.textContent = 'Show me my action plan →';
+  btn.onclick = requestLadder;
+  wrap.appendChild(btn);
+  messages.appendChild(wrap);
+  scrollBottom();
 }
 
-function setTyping(id, on) {
-  document.getElementById(id).classList.toggle('visible', on);
+async function requestLadder() {
+  document.getElementById('ladder-prompt')?.remove();
+  document.getElementById('phase-label').textContent = 'Building plan...';
+  history.push({ role: 'user', content: 'Generate my action plan.' });
+  exchangeCount++;
+  await getCoachResponse(null);
 }
 
-function lockInput(inputId, btnId, lock) {
-  document.getElementById(inputId).disabled = lock;
-  document.getElementById(btnId).disabled = lock;
+function resetConversation() {
+  history = []; started = false; exchangeCount = 0; lastUserMessage = null; lastDeepExchange = -10; deepCount = 0;
+
+  document.getElementById('messages').innerHTML = `<div class="empty" id="empty-state"><div class="empty-mark">XXXXX</div><div class="empty-sub">Enter your API key to begin</div></div>`;
+  document.getElementById('phase-label').textContent = 'Onboarding';
+  document.getElementById('input').value = '';
+  document.getElementById('input').style.height = 'auto';
+  checkKey();
 }
 
-// ── PARSE HELPERS ──
-function parseProfile(text) {
-  const p = {};
-  for (const line of text.split('\n')) {
-    const i = line.indexOf(':');
-    if (i === -1) continue;
-    const k = line.slice(0, i).trim();
-    const v = line.slice(i + 1).trim();
-    if (k && v) p[k] = v;
-  }
-  return p;
-}
-
-function parseLadder(text) {
-  return text.split('\n').filter(l => l.trim()).map(line => {
-    const parts = line.split('|');
-    if (parts.length < 3) return null;
-    const why = (parts[3] || '').replace(/^WHY:\s*/i, '').trim();
-    return { time: parts[1].trim(), text: parts[2].trim(), why };
-  }).filter(Boolean);
-}
-
-// ── RENDER CARDS ──
-function renderProfile(p) {
-  const row = (label, val, accent) =>
-    val ? `<div class="profile-row"><span class="pkey">${label}</span><span class="pval${accent?' accent':''}">${val}</span></div>` : '';
-  return `<div class="profile-card">
-    <div class="card-label">Your Profile</div>
-    ${row('Name', p.NAME)}
-    ${row('Real goal', p.REAL_GOAL || p.STATED_GOAL)}
-    ${row('Root blocker', p.ROOT_BLOCKER)}
-    ${row('Failure pattern', p.FAILURE_PATTERN)}
-    ${row('Identity gap', p.IDENTITY_GAP)}
-    ${row('Peak moment', p.PEAK_MOMENT)}
-    ${row("Today's commit", p.ACTIVE_STEP, true)}
-  </div>`;
-}
-
-function renderLadder(steps) {
-  const stepsHtml = steps.map((s, i) => `
-    <div class="ladder-step">
-      <div class="step-num ${i===0?'active':''}">${i+1}</div>
-      <div>
-        <div class="step-time">${s.time}</div>
-        <div class="step-text">${s.text}</div>
-        ${s.why ? `<div class="step-why">${s.why}</div>` : ''}
-      </div>
-    </div>`).join('');
-  return `<div class="ladder-card">
-    <div class="ladder-head"><div class="card-label" style="margin:0;">Action Plan</div></div>
-    ${stepsHtml}
-  </div>`;
-}
-
-function renderClose(text) {
-  const get = (key) => text.match(new RegExp(key + ':\\s*(.+)', 'i'))?.[1]?.trim() || '';
-  const win = get('WIN'), challenge = get('CHALLENGE'), next = get('NEXT');
-  const row = (label, val, accent) =>
-    val ? `<div class="profile-row"><span class="pkey">${label}</span><span class="pval${accent?' accent':''}">${val}</span></div>` : '';
-  return `<div class="profile-card">
-    <div class="card-label">Session Summary</div>
-    ${row('Win', win, true)}
-    ${row('Working through', challenge)}
-    ${row('Next commit', next)}
-  </div>`;
-}
-
-// ── ONBOARDING ──
-async function obSend(userMsg) {
-  obHistory.push({ role: 'user', content: userMsg });
-  lockInput('ob-input', 'ob-send', true);
-  setTyping('ob-typing', true);
-
-  let raw = '';
-  try {
-    raw = await callAPI(OB_SYSTEM, obHistory, 1000);
-  } catch(e) {
-    setTyping('ob-typing', false);
-    const msg = 'Error: ' + (e.message || 'Connection failed — check console for details.');
-    addBubble('ob-chat', 'coach', msg);
-    obHistory.push({ role: 'assistant', content: msg });
-    lockInput('ob-input', 'ob-send', false);
-    return;
-  }
-
-  setTyping('ob-typing', false);
-  obHistory.push({ role: 'assistant', content: raw });
-
-  if (raw.includes('---PROFILE---')) {
-    const before = raw.split('---PROFILE---')[0].trim();
-    const block = raw.split('---PROFILE---')[1].split('---PROFILE_END---')[0].trim();
-    profile = parseProfile(block);
-    if (before) addBubble('ob-chat', 'coach', before);
-    addHTML('ob-chat', renderProfile(profile));
-
-    const btn = document.createElement('button');
-    btn.className = 'action-btn';
-    btn.textContent = 'See my full action plan →';
-    btn.onclick = () => {
-      btn.remove();
-      addBubble('ob-chat', 'user', 'Generate my action plan.');
-      obPhase = 'await_ladder';
-      obHistory.push({ role: 'user', content: 'Generate my action plan.' });
-      obSendLadder();
-    };
-    document.getElementById('ob-chat').appendChild(btn);
-    obPhase = 'await_ladder';
-    lockInput('ob-input', 'ob-send', true);
-
-  } else if (raw.includes('---LADDER---')) {
-    const block = raw.split('---LADDER---')[1].split('---LADDER_END---')[0].trim();
-    ladder = parseLadder(block);
-    addHTML('ob-chat', renderLadder(ladder));
-    document.getElementById('checkin-tab').classList.add('ready');
-    addSystem('ob-chat', 'Onboarding complete — head to Daily Check-in to start your first session.');
-    obPhase = 'done';
-    lockInput('ob-input', 'ob-send', true);
-
-  } else {
-    const isDeep = raw.startsWith('[DEEP]');
-    const clean = raw.replace(/^\[DEEP\]\s*/, '').trim();
-    const showDeep = isDeep && obDeepCount < 3 && (obExchanges - obLastDeep) >= 4;
-    addBubble('ob-chat', 'coach', clean, showDeep);
-    if (showDeep) { obDeepCount++; obLastDeep = obExchanges; }
-    obExchanges++;
-    lockInput('ob-input', 'ob-send', false);
-  }
-
-  scrollDown('ob-chat');
-}
-
-async function obSendLadder() {
-  setTyping('ob-typing', true);
-  let raw = '';
-  try {
-    raw = await callAPI(OB_SYSTEM, obHistory, 800);
-  } catch(e) {
-    setTyping('ob-typing', false);
-    addBubble('ob-chat', 'coach', 'Connection issue — try again.');
-    return;
-  }
-  setTyping('ob-typing', false);
-  obHistory.push({ role: 'assistant', content: raw });
-
-  if (raw.includes('---LADDER---')) {
-    const block = raw.split('---LADDER---')[1].split('---LADDER_END---')[0].trim();
-    ladder = parseLadder(block);
-    addHTML('ob-chat', renderLadder(ladder));
-    document.getElementById('checkin-tab').classList.add('ready');
-    addSystem('ob-chat', 'Onboarding complete — head to Daily Check-in to start your first session.');
-    obPhase = 'done';
-  } else {
-    addBubble('ob-chat', 'coach', raw.replace(/^\[DEEP\]\s*/, '').trim());
-  }
-  scrollDown('ob-chat');
-}
-
-// ── CHECK-IN ──
-async function ciSend(userMsg) {
-  ciHistory.push({ role: 'user', content: userMsg });
-  lockInput('ci-input', 'ci-send', true);
-  setTyping('ci-typing', true);
-
-  let raw = '';
-  try {
-    raw = await callAPI(buildCISystem(profile, ladder), ciHistory, 600);
-  } catch(e) {
-    setTyping('ci-typing', false);
-    addBubble('ci-chat', 'coach', 'Connection issue — try again.');
-    ciHistory.push({ role: 'assistant', content: 'Connection issue — try again.' });
-    lockInput('ci-input', 'ci-send', false);
-    return;
-  }
-
-  setTyping('ci-typing', false);
-  ciHistory.push({ role: 'assistant', content: raw });
-
-  if (raw.includes('---CHECKIN_CLOSE---')) {
-    const before = raw.split('---CHECKIN_CLOSE---')[0].trim();
-    const block = raw.split('---CHECKIN_CLOSE---')[1].split('---CHECKIN_CLOSE_END---')[0].trim();
-    if (before) addBubble('ci-chat', 'coach', before);
-    addHTML('ci-chat', renderClose(block));
-    const next = block.match(/NEXT:\s*(.+)/i)?.[1]?.trim();
-    if (next && profile) profile.ACTIVE_STEP = next;
-    addSystem('ci-chat', 'Check-in complete. See you tomorrow.');
-    document.getElementById('ci-bar').classList.remove('visible');
-    lockInput('ci-input', 'ci-send', true);
-  } else {
-    const isDeep = raw.startsWith('[DEEP]');
-    const clean = raw.replace(/^\[DEEP\]\s*/, '').trim();
-    const showDeep = isDeep && ciDeepCount < 3 && (ciExchanges - ciLastDeep) >= 4;
-    addBubble('ci-chat', 'coach', clean, showDeep);
-    if (showDeep) { ciDeepCount++; ciLastDeep = ciExchanges; }
-    ciExchanges++;
-    lockInput('ci-input', 'ci-send', false);
-  }
-
-  scrollDown('ci-chat');
-}
-
-function initCheckin() {
-  if (ciStarted) return;
-
-  if (!profile) {
-    document.getElementById('ci-chat').innerHTML = `
-      <div class="no-profile">
-        <div style="color:var(--text3);font-size:32px;margin-bottom:4px;">○</div>
-        <div>Complete onboarding first</div>
-        <div style="font-size:12px;margin-top:4px;">Your coach needs your profile before check-ins can start.</div>
-      </div>`;
-    lockInput('ci-input', 'ci-send', true);
-    return;
-  }
-
-  ciStarted = true;
-  ciHistory = [];
-  ciDeepCount = 0; ciLastDeep = -99; ciExchanges = 0;
-
-  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-  document.getElementById('ci-bar').classList.add('visible');
-  document.getElementById('ci-bar-text').textContent = 'Check-in · ' + dateStr;
-
-  ciHistory.push({ role: 'user', content: 'Starting my check-in.' });
-  lockInput('ci-input', 'ci-send', true);
-  setTyping('ci-typing', true);
-
-  callAPI(buildCISystem(profile, ladder), ciHistory, 600).then(raw => {
-    setTyping('ci-typing', false);
-    ciHistory.push({ role: 'assistant', content: raw });
-    const isDeep = raw.startsWith('[DEEP]');
-    const clean = raw.replace(/^\[DEEP\]\s*/, '').trim();
-    addBubble('ci-chat', 'coach', clean, isDeep && ciDeepCount < 3);
-    if (isDeep) { ciDeepCount++; ciLastDeep = 0; }
-    ciExchanges++;
-    lockInput('ci-input', 'ci-send', false);
-    scrollDown('ci-chat');
-  }).catch(() => {
-    setTyping('ci-typing', false);
-    addBubble('ci-chat', 'coach', 'Connection issue — try again.');
-    lockInput('ci-input', 'ci-send', false);
-  });
-}
-
-// ── TAB SWITCHING ──
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    const t = tab.dataset.tab;
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-' + t).classList.add('active');
-    if (t === 'checkin') initCheckin();
-  });
-});
-
-// ── INPUT SETUP ──
-function wireInput(inputId, btnId, sendFn) {
-  const input = document.getElementById(inputId);
-  const btn = document.getElementById(btnId);
-  btn.addEventListener('click', sendFn);
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendFn(); }
-  });
-  input.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-  });
-}
-
-wireInput('ob-input', 'ob-send', () => {
-  const v = document.getElementById('ob-input').value.trim();
-  if (!v || obPhase === 'done' || obPhase === 'await_ladder') return;
-  document.getElementById('ob-input').value = '';
-  document.getElementById('ob-input').style.height = 'auto';
-  addBubble('ob-chat', 'user', v);
-  obSend(v);
-});
-
-wireInput('ci-input', 'ci-send', () => {
-  const v = document.getElementById('ci-input').value.trim();
-  if (!v) return;
-  document.getElementById('ci-input').value = '';
-  document.getElementById('ci-input').style.height = 'auto';
-  addBubble('ci-chat', 'user', v);
-  ciSend(v);
-});
-
-// ── BOOT ──
-function bootOnboarding() {
-  lockInput('ob-input', 'ob-send', true);
-  setTyping('ob-typing', true);
-  const opening = [{ role: 'user', content: 'Hello.' }];
-  callAPI(OB_SYSTEM, opening, 300).then(raw => {
-    setTyping('ob-typing', false);
-    obHistory = opening;
-    obHistory.push({ role: 'assistant', content: raw });
-    const clean = raw.replace(/^\[DEEP\]\s*/, '').trim();
-    addBubble('ob-chat', 'coach', clean);
-    lockInput('ob-input', 'ob-send', false);
-  }).catch((e) => {
-    setTyping('ob-typing', false);
-    addBubble('ob-chat', 'coach', 'Error: ' + (e.message || 'Could not connect — check console (F12) for details.'));
-  });
-}
-
-window.addEventListener('load', bootOnboarding);
-
-
+document.getElementById('input').addEventListener('focus', () => { setTimeout(scrollBottom, 350); });
 </script>
 </body>
 </html>
