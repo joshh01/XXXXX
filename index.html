@@ -631,18 +631,21 @@ async function callAPI(system, history, maxTokens) {
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'prompt-caching-2024-07-31'
+      'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
       model: MODEL,
       max_tokens: maxTokens,
-      system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
+      system: system,
       messages: history
     })
   });
   const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
+  if (!res.ok || data.error) {
+    const msg = data.error?.message || `HTTP ${res.status}`;
+    console.error('API error:', msg, data);
+    throw new Error(msg);
+  }
   return data.content?.[0]?.text || '';
 }
 
@@ -780,8 +783,9 @@ async function obSend(userMsg) {
     raw = await callAPI(OB_SYSTEM, obHistory, 1000);
   } catch(e) {
     setTyping('ob-typing', false);
-    addBubble('ob-chat', 'coach', 'Connection issue — try again.');
-    obHistory.push({ role: 'assistant', content: 'Connection issue — try again.' });
+    const msg = 'Error: ' + (e.message || 'Connection failed — check console for details.');
+    addBubble('ob-chat', 'coach', msg);
+    obHistory.push({ role: 'assistant', content: msg });
     lockInput('ob-input', 'ob-send', false);
     return;
   }
@@ -1016,9 +1020,9 @@ function bootOnboarding() {
     const clean = raw.replace(/^\[DEEP\]\s*/, '').trim();
     addBubble('ob-chat', 'coach', clean);
     lockInput('ob-input', 'ob-send', false);
-  }).catch(() => {
+  }).catch((e) => {
     setTyping('ob-typing', false);
-    addBubble('ob-chat', 'coach', 'Could not connect. Check your API key and try reloading.');
+    addBubble('ob-chat', 'coach', 'Error: ' + (e.message || 'Could not connect — check console (F12) for details.'));
   });
 }
 
