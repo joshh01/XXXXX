@@ -471,6 +471,11 @@ let exchangeCount = 0;
 // ── INTRO SCREEN ──
 function startFromIntro() {
   document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('input').disabled = false;
+  document.getElementById('send-btn').disabled = false;
+  const hint = document.getElementById('hint');
+  if (hint) hint.textContent = 'Enter to send · Shift+Enter for new line';
+  startConversation();
 }
 
 // Strip [DEEP] tag — returns {text, isDeep} with client-side cooldown
