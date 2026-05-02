@@ -1397,7 +1397,7 @@ document.getElementById('ci-input').addEventListener('focus', () => {
 });
 
 // ── SIMULATE ──
-const SIM_PERSONA = `You are simulating a real person in a coaching conversation. Answer ONLY the last question the coach asked. Never ask questions yourself. Never continue the coach's thought. Give short, slightly guarded answers — 1-2 sentences max. Don't be dramatic or overly self-aware. Sound like a real person texting, not writing a journal entry. Stay in character as: male, mid-20s, software job, building an AI tool, wakes up late, YouTube when things get hard, China trip was a peak moment, wants 5k/mo, gym inconsistent, messy room.`;
+const SIM_PERSONA = `You are playing a person in a coaching conversation. Rules: answer only the last question asked. Never question the coach. Never ask what the answer is. Never say things like "that's your call" or "you tell me." If you don't know what to say, respond with "not sure" or "I guess so" or give a vague one-line answer. Stay in character always. Sound like a real person texting — short, slightly guarded, not dramatic. 1-2 sentences maximum.`;
 
 async function runSimulation() {
   const btn = document.getElementById('simulate-btn');
