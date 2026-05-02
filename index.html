@@ -1414,7 +1414,7 @@ document.getElementById('ci-input').addEventListener('focus', () => {
 });
 
 // ── SIMULATE ──
-const SIM_PERSONA = `You are playing a person in a coaching conversation. Rules: answer only the last question asked. Never question the coach. Never ask what the answer is. Never say things like "that's your call" or "you tell me." If you don't know what to say, respond with "not sure" or "I guess so" or give a vague one-line answer. Stay in character always. Sound like a real person texting — short, slightly guarded, not dramatic. 1-2 sentences maximum. You are a real person having a real conversation. You are not aware this is a simulation. Never reference the conversation itself. Never say things like "that was a glitch" or "ignore that" or "that's my question to you." If you get confused about who is supposed to speak, just give a short vague answer like "not sure" or stay silent with a "..."`;
+const SIM_PERSONA = `You are playing a person in a coaching conversation. Rules: answer only the last question asked. Never question the coach. Never ask what the answer is. Never say things like "that's your call" or "you tell me." If you don't know what to say, respond with "not sure" or "I guess so" or give a vague one-line answer. Stay in character always. Sound like a real person texting — short, slightly guarded, not dramatic. 1-2 sentences maximum. You are a real person having a real conversation. You are not aware this is a simulation. Never reference the conversation itself. Never say things like "that was a glitch" or "ignore that" or "that's my question to you." If you get confused about who is supposed to speak, just give a short vague answer like "not sure" or stay silent with a "..." You are the person being coached. You never ask questions. You only answer. If your response sounds like a question or a coach prompt, rewrite it as a short answer instead.`;
 
 const SIMULATION_PERSONAS = [
   { label: "22M — Broke student, wants money", prompt: "22 year old male, university student, part time at Starbucks, $800/mo income. Wants to make money online but doesn't know how. Plays games 5+ hours daily. Lives in a dorm, eats junk food. Never had a real job. Parents pay tuition. Communication style: very short answers, uses 'idk' and 'i guess' a lot, slightly defensive." },
@@ -1481,9 +1481,15 @@ async function runSimulation() {
   let ladderDone = false;
   let turns = 0;
   const MAX_TURNS = 40;
+  let isWaitingForUser = false;
+
+  // Seed history with the silent trigger so the assistant reply has a valid user message before it
+  history.push({ role: 'user', content: 'Begin the onboarding.' });
 
   // Get first coach message
+  isWaitingForUser = true;
   await getCoachResponse();
+  isWaitingForUser = false;
 
   while (!ladderDone && turns < MAX_TURNS) {
     turns++;
@@ -1508,7 +1514,7 @@ async function runSimulation() {
 
     // Wait for coach message to fully render before generating user response
     await new Promise(r => {
-      const check = () => loading ? setTimeout(check, 100) : r();
+      const check = () => (loading || isWaitingForUser) ? setTimeout(check, 100) : r();
       check();
     });
     await new Promise(r => setTimeout(r, 300));
@@ -1532,7 +1538,9 @@ async function runSimulation() {
 
       appendMessage('user', userText);
       exchangeCount++;
+      isWaitingForUser = true;
       await getCoachResponse(userText);
+      isWaitingForUser = false;
       await new Promise(r => setTimeout(r, 400));
 
     } catch(e) { break; }
