@@ -1544,7 +1544,7 @@ async function runSimulation() {
       isWaitingForUser = true;
       await getCoachResponse(userText);
       isWaitingForUser = false;
-      await new Promise(r => setTimeout(r, 400));
+      await new Promise(r => setTimeout(r, 2500));
 
     } catch(e) { break; }
 
