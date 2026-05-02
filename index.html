@@ -518,6 +518,7 @@ Connect goals to identity: "The [goal], the [other goal] — you said [their wor
 Before the mirror — if the primary goal hasn't been revisited since Phase 1, ask one question about where they stand on it now.
 Follow up one level deeper on high-value threads: relationships, vices, abandoned habits, peak moments. One follow-up question before moving on.
 When someone says "not sure" about a life transition — push once: "What changed specifically about your days when that happened?"
+MOVE TO MIRROR WHEN READY. When you have clearly identified all of the following — the peak moment, the root blocker, the failure pattern, and the identity gap — move to the mirror immediately. Do not continue excavating once the picture is complete. More exchanges do not produce a better mirror. If you have all four signals by exchange 25, mirror at exchange 26. Staying in diagnosis past the point of clarity weakens the mirror, it does not strengthen it.
 
 PHASE 4 — MIRROR (two segments)
 SEGMENT A: Reflect current reality, problem areas, failure pattern, root blocker. 4-6 sentences maximum. Use their exact words. Name the uncomfortable thing directly.
@@ -1544,7 +1545,7 @@ async function runSimulation() {
       isWaitingForUser = true;
       await getCoachResponse(userText);
       isWaitingForUser = false;
-      await new Promise(r => setTimeout(r, 2500));
+      await new Promise(r => setTimeout(r, 5000));
 
     } catch(e) { break; }
 
