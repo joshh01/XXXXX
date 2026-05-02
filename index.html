@@ -1517,16 +1517,22 @@ async function runSimulation() {
     await new Promise(r => setTimeout(r, 300));
 
     // Generate user response
+    // Detect commit sequence — inject stricter instruction if coach is asking for a commitment
+    const commitKeywords = ['tomorrow', 'commit', 'specific thing', 'what time'];
+    const isCommitPrompt = commitKeywords.some(kw => lastCoach.toLowerCase().includes(kw));
+    const commitInstruction = isCommitPrompt
+      ? ' IMPORTANT: The coach is asking for a commitment. Respond with a short first-person answer only — a time and an action. Example: "10am, I\'ll build the first screen." Never a question. Never a coach prompt.'
+      : '';
+
     try {
       const userRes = await fetch('https://5-x.vercel.app/api/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 150,
-          system: activePersona,
-          messages: history.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content }))
-            .concat([{ role: 'user', content: lastCoach }])
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 100,
+          system: activePersona + commitInstruction,
+          messages: [{ role: 'user', content: lastCoach }]
         })
       });
       const userData = await userRes.json();
