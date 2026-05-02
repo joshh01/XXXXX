@@ -285,6 +285,76 @@
     box-shadow: 0 0 0 1px rgba(255,155,30,0.1);
   }
 
+  /* ── TAB BAR ── */
+  .tab-bar {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--black);
+    flex-shrink: 0; z-index: 19;
+    padding: 0 16px;
+  }
+
+  .tab-btn {
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--dimmer); background: none; border: none;
+    border-bottom: 2px solid transparent;
+    padding: 11px 14px 9px; cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover { color: var(--dim); }
+
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-btn.unlocked:not(.active) {
+    color: var(--accent-dim);
+  }
+
+  .tab-btn:disabled {
+    opacity: 0.25; cursor: not-allowed;
+  }
+
+  /* ── TAB PANELS ── */
+  .tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; min-height: 0; }
+  .tab-panel.active { display: flex; }
+
+  /* ── CHECK-IN SPECIFIC ── */
+  .ci-date-pill {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px;
+    color: var(--dimmer); background: var(--card); border: 1px solid var(--border-mid);
+    border-radius: 20px; padding: 3px 8px; text-transform: uppercase;
+    white-space: nowrap; align-self: center;
+  }
+
+  .ci-locked {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 10px; padding: 40px 24px; text-align: center;
+  }
+
+  .ci-locked-mark {
+    font-family: 'DM Mono', monospace; font-size: 22px;
+    font-weight: 500; letter-spacing: 6px; color: var(--dimmer); opacity: 0.4;
+  }
+
+  .ci-locked-sub { font-size: 13px; color: var(--dimmer); opacity: 0.6; line-height: 1.6; }
+
+  /* Checkin close card */
+  .ci-close-card {
+    background: var(--accent-bg); border: 1px solid var(--accent-border);
+    border-radius: var(--radius); padding: 18px; margin-top: 4px;
+    animation: fadeUp 0.4s ease both;
+  }
+  .ci-close-card h3 {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 14px;
+  }
+
 </style>
 </head>
 <body>
@@ -326,7 +396,7 @@
   <div class="header-left">
     <span class="wordmark">XXXXX</span>
     <span class="phase-pill" id="phase-label">Onboarding</span>
-    <span class="version-tag">v16</span>
+    <span class="version-tag">v17</span>
   </div>
   <div class="header-right">
     <button class="icon-btn" id="export-btn" onclick="exportChat()">
@@ -340,6 +410,14 @@
     <button class="icon-btn" onclick="resetConversation()">Reset</button>
   </div>
 </header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-ob" onclick="switchTab('ob')">Onboarding</button>
+  <button class="tab-btn" id="tab-ci" onclick="switchTab('ci')" disabled>Daily Check-in</button>
+</div>
+
+<!-- ONBOARDING PANEL -->
+<div class="tab-panel active" id="panel-ob">
 
 <div class="messages" id="messages">
   <div class="empty" id="empty-state">
@@ -360,6 +438,33 @@
   </div>
   <div class="hint" id="hint">Enter API key to begin</div>
 </div>
+
+</div><!-- /panel-ob -->
+
+<!-- CHECK-IN PANEL -->
+<div class="tab-panel" id="panel-ci">
+
+  <div class="ci-locked" id="ci-locked">
+    <div class="ci-locked-mark">XXXXX</div>
+    <div class="ci-locked-sub">Complete onboarding first.<br>Your coach needs your profile before check-ins start.</div>
+  </div>
+
+  <div class="messages" id="ci-messages" style="display:none;"></div>
+
+  <div class="input-area" id="ci-input-area" style="display:none;">
+    <div class="input-row">
+      <textarea id="ci-input" placeholder="Type your response..." rows="1" onkeydown="handleCiKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="ci-send-btn" onclick="ciSend()" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#080808" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"/>
+          <polyline points="5 12 12 5 19 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="hint">Enter to send · Shift+Enter for new line</div>
+  </div>
+
+</div><!-- /panel-ci -->
 
 <script>
 const SYSTEM_PROMPT = `You are an accountability coach running a structured onboarding conversation. Build a complete picture of who this person is, who they want to become, and what is actually blocking them.
@@ -741,6 +846,10 @@ function processReply(text, responseMs, isDeep) {
     const card = buildProfileCard(profileRaw);
     document.getElementById('messages').appendChild(card);
     document.getElementById('phase-label').textContent = 'Profile built';
+    // Unlock check-in tab
+    const ciTab = document.getElementById('tab-ci');
+    ciTab.disabled = false;
+    ciTab.classList.add('unlocked');
     // Show action plan prompt after profile
     setTimeout(() => showLadderPrompt(), 600);
   }
@@ -951,6 +1060,316 @@ function resetConversation() {
 }
 
 document.getElementById('input').addEventListener('focus', () => { setTimeout(scrollBottom, 350); });
+
+// ── TAB SWITCHING ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (tab === 'ci') initCheckin();
+}
+
+// ── CHECK-IN STATE ──
+let ciHistory = [];
+let ciLoading = false;
+let ciStarted = false;
+let ciDeepCount = 0;
+let ciLastDeepExchange = -10;
+let ciExchangeCount = 0;
+let ciLastUserMessage = null;
+
+// ── BUILD CHECK-IN SYSTEM PROMPT FROM PROFILE ──
+function buildCheckinPrompt() {
+  const card = document.getElementById('profile-card');
+  const fields = {};
+
+  if (card) {
+    // Pull structured fields from the rendered card
+    card.querySelectorAll('.profile-row').forEach(row => {
+      const k = row.querySelector('.profile-key')?.textContent?.trim();
+      const v = row.querySelector('.profile-val')?.textContent?.trim();
+      if (k && v) fields[k.toLowerCase().replace(/\s+/g, '_')] = v;
+    });
+    // Identity target
+    const identity = card.querySelector('.identity-statement');
+    if (identity) fields['identity_target'] = identity.textContent.replace(/[""]/g, '').trim();
+    // First commitment (accent-coloured div)
+    const commit = card.querySelector('[style*="accent"]');
+    if (commit) fields['first_action'] = commit.textContent.trim();
+    // Goals
+    const goals = [];
+    card.querySelectorAll('.goal-item').forEach(g => {
+      const type = g.querySelector('.goal-type')?.textContent?.trim();
+      const val = g.childNodes[g.childNodes.length - 1]?.textContent?.trim();
+      if (val) goals.push((type || '') + ': ' + val);
+    });
+    if (goals.length) fields['goals'] = goals.join(' | ');
+    // Problem areas
+    const tags = [];
+    card.querySelectorAll('.problem-tag').forEach(t => tags.push(t.textContent.trim()));
+    if (tags.length) fields['problem_areas'] = tags.join(', ');
+  }
+
+  // Pull ladder steps if rendered
+  const ladderCard = document.getElementById('ladder-card');
+  const ladderSteps = [];
+  if (ladderCard) {
+    ladderCard.querySelectorAll('.ladder-step').forEach((step, i) => {
+      const title = step.querySelector('.step-title')?.textContent?.trim();
+      const why = step.querySelector('.step-why')?.textContent?.trim();
+      const when = step.querySelector('.step-timeframe')?.textContent?.trim();
+      if (title) ladderSteps.push(`Step ${i+1} (${when}): ${title}${why ? ' — ' + why : ''}`);
+    });
+  }
+
+  const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  return `You are an accountability coach running a daily check-in. Today is ${today}.
+
+You already know this person from their onboarding. Do not re-introduce yourself. Do not explain what you're doing. Just check in.
+
+THEIR PROFILE:
+Identity target: ${fields['identity_target'] || 'not specified'}
+Goals: ${fields['goals'] || 'not specified'}
+Root cause: ${fields['root_cause'] || 'not specified'}
+Failure pattern: ${fields['failure_pattern'] || 'not specified'}
+Identity gap: ${fields['identity_gap'] || 'not specified'}
+Peak moment: ${fields['peak_moment'] || 'not specified'}
+First target: ${fields['first_target'] || fields['keystone'] || 'not specified'}
+Problem areas: ${fields['problem_areas'] || 'not specified'}
+Last commitment: ${fields['first_action'] || fields['first_commitment'] || 'not specified'}
+Coaching tone: ${fields['coaching_tone'] || 'direct'}
+${ladderSteps.length ? '\nTHEIR LADDER:\n' + ladderSteps.join('\n') : ''}
+
+CHECK-IN RULES:
+- Open with ONE direct question referencing their specific last commitment. Not "how are you doing." Reference what they said they'd do.
+- Keep it to 5–8 exchanges total. This is a check-in, not a full session.
+- Affirm wins in one sentence. No padding.
+- When they report a failure: don't shame. Ask once what got in the way — specifically the environment, not their character. Then move forward.
+- Reference their failure pattern by name if it's showing up — call it what it is.
+- Reference their peak moment when they need a reference point.
+- If they're drifting into a new topic that needs real work — acknowledge it, note it, stay on the check-in. "That's worth a full session — let's stay on today."
+- End every check-in with one specific forward commitment: action, not consumption, specific time attached. Same commit quality rules as onboarding.
+- After the forward commit is confirmed, output ONLY this block:
+
+---CHECKIN_CLOSE---
+WIN: [one line — what they did or acknowledged today]
+CHALLENGE: [one line — what they're working through honestly]
+NEXT: [their exact forward commitment with time]
+---CHECKIN_CLOSE_END---
+
+DEEP QUESTIONS:
+- [DEEP] tag available. Same rules — max 3 per session, 4-exchange cooldown, only for moments that matter.
+- Frontend strips the tag.
+
+TONE: Match their coaching tone (${fields['coaching_tone'] || 'direct'}). 2–3 sentences max per message. No forbidden words: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense.
+
+SENSITIVE SITUATIONS: Same rules as onboarding — relationships: reflect only. Abuse/danger: stop, one resource. Mental health crisis: human first, one resource.`;
+}
+
+// ── INIT CHECK-IN ──
+function initCheckin() {
+  if (ciStarted) return;
+
+  const card = document.getElementById('profile-card');
+  if (!card) return; // still locked — shouldn't happen since tab is disabled until profile exists
+
+  ciStarted = true;
+
+  // Swap locked state for live UI
+  document.getElementById('ci-locked').style.display = 'none';
+  document.getElementById('ci-messages').style.display = '';
+  document.getElementById('ci-input-area').style.display = '';
+
+  // Update header pill
+  document.getElementById('phase-label').textContent = 'Check-in';
+
+  // Kick off coach opening
+  getCiResponse();
+}
+
+// ── CI APPEND MESSAGE ──
+function ciAppendMessage(role, content, isDeep) {
+  const messages = document.getElementById('ci-messages');
+
+  const msg = document.createElement('div');
+  msg.className = `msg ${role}`;
+
+  const av = document.createElement('div');
+  av.className = `avatar ${role === 'coach' ? 'coach-av' : 'user-av'}`;
+  av.textContent = role === 'coach' ? 'XX' : 'YOU';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = content;
+  if (isDeep && role === 'coach') activateDeepMode(bubble);
+
+  msg.appendChild(av);
+  msg.appendChild(bubble);
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function ciShowTyping() {
+  const messages = document.getElementById('ci-messages');
+  const msg = document.createElement('div');
+  msg.className = 'msg coach'; msg.id = 'ci-typing';
+  const av = document.createElement('div');
+  av.className = 'avatar coach-av'; av.textContent = 'XX';
+  const b = document.createElement('div');
+  b.className = 'typing-bubble';
+  b.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  msg.appendChild(av); msg.appendChild(b);
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function ciRemoveTyping() { document.getElementById('ci-typing')?.remove(); }
+
+function ciSetLoading(val) {
+  ciLoading = val;
+  document.getElementById('ci-send-btn').disabled = val;
+  document.getElementById('ci-input').disabled = val;
+}
+
+// ── CI CLOSE CARD ──
+function buildCheckinCloseCard(raw) {
+  const get = (key) => raw.match(new RegExp(key + ':\\s*(.+)', 'i'))?.[1]?.trim() || '';
+  const win = get('WIN'), challenge = get('CHALLENGE'), next = get('NEXT');
+
+  const card = document.createElement('div');
+  card.className = 'ci-close-card';
+  const title = document.createElement('h3');
+  title.textContent = 'Check-in complete';
+  card.appendChild(title);
+
+  [['Win today', win], ['Working through', challenge], ['Next commitment', next]].forEach(([label, val]) => {
+    if (!val) return;
+    const row = document.createElement('div');
+    row.className = 'profile-row';
+    row.innerHTML = `<span class="profile-key">${label}</span><span class="profile-val"${label === 'Next commitment' ? ' style="color:var(--accent);"' : ''}>${val}</span>`;
+    card.appendChild(row);
+  });
+
+  return card;
+}
+
+// ── CI STRIP DEEP TAG ──
+function ciStripDeepTag(text) {
+  let isDeep = text.startsWith('[DEEP]');
+  if (isDeep) {
+    text = text.replace('[DEEP]', '').trim();
+    if (ciExchangeCount - ciLastDeepExchange < 4 || ciDeepCount >= 3) {
+      isDeep = false;
+    } else {
+      ciLastDeepExchange = ciExchangeCount;
+      ciDeepCount++;
+    }
+  }
+  return { text, isDeep };
+}
+
+// ── CI PROCESS REPLY ──
+function ciProcessReply(raw) {
+  const closeMatch = raw.match(/---CHECKIN_CLOSE---([\s\S]*?)---CHECKIN_CLOSE_END---/);
+  let clean = raw;
+
+  if (closeMatch) {
+    clean = raw.replace(/---CHECKIN_CLOSE---([\s\S]*?)---CHECKIN_CLOSE_END---/, '').trim();
+    const { text, isDeep } = ciStripDeepTag(clean);
+    if (text) ciAppendMessage('coach', text, isDeep);
+
+    const card = buildCheckinCloseCard(closeMatch[1].trim());
+    document.getElementById('ci-messages').appendChild(card);
+    document.getElementById('ci-messages').scrollTop = document.getElementById('ci-messages').scrollHeight;
+
+    // Lock input — session done
+    ciSetLoading(true);
+    document.getElementById('ci-input').placeholder = 'Check-in complete';
+    document.getElementById('phase-label').textContent = 'Done for today';
+  } else {
+    const { text, isDeep } = ciStripDeepTag(clean);
+    ciAppendMessage('coach', text, isDeep);
+  }
+}
+
+// ── CI API CALL ──
+async function getCiResponse(userMessage = null, isRetry = false) {
+  if (userMessage) {
+    ciLastUserMessage = userMessage;
+    ciHistory.push({ role: 'user', content: userMessage });
+  }
+
+  ciSetLoading(true);
+  ciShowTyping();
+
+  try {
+    const res = await fetch('https://5-x.vercel.app/api/proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 600,
+        system: [{ type: 'text', text: buildCheckinPrompt(), cache_control: { type: 'ephemeral' } }],
+        messages: ciHistory.length > 0 ? ciHistory : [{ role: 'user', content: 'Begin the check-in.' }]
+      })
+    });
+
+    const data = await res.json();
+    ciRemoveTyping();
+
+    if (data.error) {
+      if (!isRetry && (data.error.type === 'overloaded_error' || data.error.status === 529)) {
+        if (ciLastUserMessage) ciHistory.pop();
+        setTimeout(async () => { ciRemoveTyping(); await getCiResponse(ciLastUserMessage, true); }, 2000);
+        return;
+      }
+      ciAppendMessage('coach', 'Error: ' + data.error.message, false);
+      ciSetLoading(false);
+      return;
+    }
+
+    const reply = data.content[0].text;
+    ciProcessReply(reply);
+    ciHistory.push({ role: 'assistant', content: reply });
+    ciExchangeCount++;
+
+  } catch (err) {
+    ciRemoveTyping();
+    if (!isRetry) {
+      if (ciLastUserMessage) ciHistory.pop();
+      setTimeout(async () => { await getCiResponse(ciLastUserMessage, true); }, 2000);
+    } else {
+      ciAppendMessage('coach', 'Connection issue — please try again.', false);
+      ciSetLoading(false);
+    }
+  }
+
+  ciSetLoading(false);
+}
+
+// ── CI SEND ──
+async function ciSend() {
+  const input = document.getElementById('ci-input');
+  const text = input.value.trim();
+  if (!text || ciLoading) return;
+  input.value = ''; input.style.height = 'auto';
+  ciAppendMessage('user', text, false);
+  ciExchangeCount++;
+  await getCiResponse(text);
+}
+
+function handleCiKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!ciLoading) ciSend(); }
+}
+
+document.getElementById('ci-input').addEventListener('focus', () => {
+  setTimeout(() => {
+    const m = document.getElementById('ci-messages');
+    m.scrollTop = m.scrollHeight;
+  }, 350);
+});
 </script>
 </body>
 </html>
