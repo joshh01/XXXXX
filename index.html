@@ -58,8 +58,9 @@
     padding:5px 8px; cursor:pointer; display:flex; align-items:center; gap:4px;
     transition:border-color 0.2s,color 0.2s; white-space:nowrap; flex-shrink:0;
   }
-  .icon-btn:hover { border-color:var(--accent-dim); color:var(--accent); }
-  .icon-btn.success { border-color:var(--accent); color:var(--accent); }
+  .icon-btn.simulate { border-color: var(--accent-dim); color: var(--accent); }
+  .icon-btn.simulate:hover { background: var(--accent-bg); border-color: var(--accent); }
+  .icon-btn.simulate:disabled { opacity: 0.3; cursor: not-allowed; }
   .icon-btn svg { width:11px; height:11px; flex-shrink:0; }
 
   .messages {
@@ -407,6 +408,7 @@
       </svg>
       Export
     </button>
+    <button class="icon-btn simulate" id="simulate-btn" onclick="runSimulation()">Simulate</button>
     <button class="icon-btn" onclick="resetConversation()">Reset</button>
   </div>
 </header>
@@ -480,10 +482,10 @@ CONVERSATION PHASES:
 
 PHASE 1 — CURRENT REALITY (2-3 exchanges)
 Open with: what are they actually trying to change. Then get specific — walk me through yesterday, what time did you wake up. Force specificity early. Always ask the time when someone describes their morning — wake time is a keystone data point.
-For goals that could be ambivalent (relationship, lifestyle change, leaving a job) — ask early: "Is this something you genuinely want, or something you feel like you should want?" The answer changes everything about how you coach.
 
 PHASE 2 — FULL PICTURE (3-4 exchanges)
 Ask about ALL goals: "Beyond that — what else are you trying to build or become? Health, relationships, habits, who you want to be?"
+For goals that could be ambivalent (relationship, lifestyle change, leaving a job, building a business) — ask early in Phase 2: "Is this something you genuinely want, or something you feel like you should want?" The answer changes everything about how you coach.
 Ask about problem areas: "Outside of those goals — what else would you change about your day-to-day if you could?"
 When someone mentions social goals — ask what their current social life actually looks like before moving on.
 After the first problem areas answer, ask two targeted follow-ups to surface hidden issues:
@@ -525,7 +527,7 @@ CONVERSATION RULES:
 - CONTRADICTIONS — name once, directly. Move on if unresolved.
 - THREAD VALUE — after 2 exchanges, is this revealing blocker, identity, pattern, or goals? If not, cut and move. Low value: minor logistics, small chores. High value: failures, peak moments, identity, vices, relationships.
 - VARY LANGUAGE — never use the same phrase twice. Rotate: "Take a guess." / "What's your gut say?" / "What comes to mind first?" / "If you had to put words to it?"
-- SIGNAL DEEP QUESTIONS — use [DEEP] sparingly. Maximum 3 times per entire conversation. Reserve it only for the single most emotionally significant question in a phase — the one that if answered honestly changes everything. Peak moment question always gets [DEEP]. Identity gap question usually gets [DEEP]. Fear/root cause gets [DEEP] only if it's the deepest moment in the conversation. Start your message with [DEEP] (stripped by frontend). Do NOT add any text prefix. Never use [DEEP] within 4 exchanges of the previous one.
+- SIGNAL DEEP QUESTIONS — use [DEEP] sparingly. Maximum 3 per conversation. Reserve for the single most emotionally significant QUESTION in a phase — the one that if answered honestly changes everything. Peak moment question always gets [DEEP]. Fear/root cause gets [DEEP] only if it is the deepest moment in the conversation. NEVER use [DEEP] on mirror segments, reflection statements, or any message that is not a direct question. Start your message with [DEEP] (stripped by frontend). Do not add any text prefix. Never use [DEEP] within 4 exchanges of the previous one.
 - NO THERAPY — cut psychological threads not tied to concrete present blockers.
 - NO ADVICE until mirror and commit.
 - FORBIDDEN WORDS: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense, good point, that's worth holding onto.
@@ -1111,15 +1113,21 @@ function buildCheckinPrompt() {
     if (tags.length) fields['problem_areas'] = tags.join(', ');
   }
 
-  // Pull ladder steps if rendered
+  // Pull ladder steps if rendered — also track active step
   const ladderCard = document.getElementById('ladder-card');
   const ladderSteps = [];
+  let activeStepNum = 1;
+  let activeStepText = '';
   if (ladderCard) {
     ladderCard.querySelectorAll('.ladder-step').forEach((step, i) => {
       const title = step.querySelector('.step-title')?.textContent?.trim();
       const why = step.querySelector('.step-why')?.textContent?.trim();
       const when = step.querySelector('.step-timeframe')?.textContent?.trim();
-      if (title) ladderSteps.push(`Step ${i+1} (${when}): ${title}${why ? ' — ' + why : ''}`);
+      const isActive = step.querySelector('.step-num.active') !== null;
+      if (title) {
+        ladderSteps.push(`Step ${i+1} (${when}): ${title}${why ? ' — ' + why : ''}`);
+        if (isActive) { activeStepNum = i + 1; activeStepText = title; }
+      }
     });
   }
 
@@ -1140,17 +1148,25 @@ First target: ${fields['first_target'] || fields['keystone'] || 'not specified'}
 Problem areas: ${fields['problem_areas'] || 'not specified'}
 Last commitment: ${fields['first_action'] || fields['first_commitment'] || 'not specified'}
 Coaching tone: ${fields['coaching_tone'] || 'direct'}
-${ladderSteps.length ? '\nTHEIR LADDER:\n' + ladderSteps.join('\n') : ''}
+${ladderSteps.length ? `
+THEIR LADDER (${ladderSteps.length} steps):
+${ladderSteps.join('\n')}
+
+ACTIVE LADDER STEP: Step ${activeStepNum} — ${activeStepText}
+The user is currently on Step ${activeStepNum} of ${ladderSteps.length}. When acknowledging a win that maps to this step, connect it back in one sentence: "That's Step ${activeStepNum} on your ladder — [one sentence connecting the action to their identity target]."` : ''}
 
 CHECK-IN RULES:
 - Open with ONE direct question referencing their specific last commitment. Not "how are you doing." Reference what they said they'd do.
 - Keep it to 5–8 exchanges total. This is a check-in, not a full session.
-- Affirm wins in one sentence. No padding.
+- Affirm wins in one direct sentence. No padding. No "that's a commitment held" — just name what they did and move on.
 - When they report a failure: don't shame. Ask once what got in the way — specifically the environment, not their character. Then move forward.
 - Reference their failure pattern by name if it's showing up — call it what it is.
 - Reference their peak moment when they need a reference point.
 - If they're drifting into a new topic that needs real work — acknowledge it, note it, stay on the check-in. "That's worth a full session — let's stay on today."
 - End every check-in with one specific forward commitment: action, not consumption, specific time attached. Same commit quality rules as onboarding.
+
+PROBLEM AREA ROTATION: The profile has multiple problem areas. Don't address all of them every session. Focus on what's relevant today. Every third session, surface one non-primary problem area that hasn't come up recently — name it briefly and ask one question. Track session number by checking how many messages are in the conversation history.
+
 - After the forward commit is confirmed, output ONLY this block:
 
 ---CHECKIN_CLOSE---
@@ -1160,10 +1176,11 @@ NEXT: [their exact forward commitment with time]
 ---CHECKIN_CLOSE_END---
 
 DEEP QUESTIONS:
-- [DEEP] tag available. Same rules — max 3 per session, 4-exchange cooldown, only for moments that matter.
+- [DEEP] tag available. Same rules — max 3 per session, 4-exchange cooldown, QUESTIONS ONLY, never on statements or reflection.
 - Frontend strips the tag.
 
-TONE: Match their coaching tone (${fields['coaching_tone'] || 'direct'}). 2–3 sentences max per message. No forbidden words: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense.
+TONE: Match their coaching tone (${fields['coaching_tone'] || 'direct'}). 2–3 sentences max per message.
+FORBIDDEN: amazing, great, awesome, absolutely, certainly, I understand, I hear you, that makes sense, good point, that's worth holding onto, that's a commitment held, that's the setup that actually works.
 
 SENSITIVE SITUATIONS: Same rules as onboarding — relationships: reflect only. Abuse/danger: stop, one resource. Mental health crisis: human first, one resource.`;
 }
@@ -1209,6 +1226,14 @@ function ciAppendMessage(role, content, isDeep) {
   msg.appendChild(bubble);
   messages.appendChild(msg);
   messages.scrollTop = messages.scrollHeight;
+
+  // Auto-focus input after coach responds
+  if (role === 'coach') {
+    setTimeout(() => {
+      const input = document.getElementById('ci-input');
+      if (input && !input.disabled) input.focus();
+    }, 100);
+  }
 }
 
 function ciShowTyping() {
@@ -1370,6 +1395,88 @@ document.getElementById('ci-input').addEventListener('focus', () => {
     m.scrollTop = m.scrollHeight;
   }, 350);
 });
+
+// ── SIMULATE ──
+const SIM_PERSONA = `You are playing a user in a coaching conversation. Stay in character as this persona: male, mid-20s, software developer, $40k salary, wants to make $5k/month outside work, building an AI coaching tool. Wakes up between 12pm and 2pm, works on the project late at night, reaches for YouTube when work gets hard or confusing. Recently had a work trip to China where he felt locked in — woke up early, structured days, felt like a businessman. Goes to the gym 1-2x a week inconsistently. Messy room. Watches porn occasionally. Friends aren't very ambitious. Wants to dress better, wake earlier, build muscle. Give realistic answers — some vague, some specific. Make the coach work for deeper answers. Respond in 1-3 sentences only. Never break character.`;
+
+async function runSimulation() {
+  const btn = document.getElementById('simulate-btn');
+  const phase = document.getElementById('phase-label');
+  btn.disabled = true;
+  phase.textContent = 'Simulating...';
+
+  // Clear and reset
+  history = []; started = false; exchangeCount = 0;
+  lastUserMessage = null; lastDeepExchange = -10; deepCount = 0;
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('input').value = '';
+  document.getElementById('input').style.height = 'auto';
+  // Re-disable check-in tab
+  const ciTab = document.getElementById('tab-ci');
+  ciTab.disabled = true; ciTab.classList.remove('unlocked');
+
+  started = true;
+  let ladderDone = false;
+  let turns = 0;
+  const MAX_TURNS = 40;
+
+  // Get first coach message
+  await getCoachResponse();
+
+  while (!ladderDone && turns < MAX_TURNS) {
+    turns++;
+
+    // Check if ladder already rendered (simulation complete)
+    if (document.getElementById('ladder-card')) { ladderDone = true; break; }
+
+    // Check if ladder prompt button is showing — auto-click it
+    const ladderPromptBtn = document.querySelector('.ladder-prompt-btn');
+    if (ladderPromptBtn) {
+      await new Promise(r => setTimeout(r, 800));
+      ladderPromptBtn.click();
+      await new Promise(r => setTimeout(r, 1500));
+      continue;
+    }
+
+    // Get last coach message to feed to user persona
+    const msgs = document.getElementById('messages');
+    const bubbles = msgs.querySelectorAll('.msg.coach .bubble');
+    const lastCoach = bubbles[bubbles.length - 1]?.textContent || '';
+    if (!lastCoach) break;
+
+    await new Promise(r => setTimeout(r, 600));
+
+    // Generate user response
+    try {
+      const userRes = await fetch('https://5-x.vercel.app/api/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 150,
+          system: SIM_PERSONA,
+          messages: history.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content }))
+            .concat([{ role: 'user', content: lastCoach }])
+        })
+      });
+      const userData = await userRes.json();
+      if (userData.error) break;
+      const userText = userData.content[0].text.trim();
+
+      appendMessage('user', userText);
+      exchangeCount++;
+      await getCoachResponse(userText);
+      await new Promise(r => setTimeout(r, 400));
+
+    } catch(e) { break; }
+
+    // Check again after coach responds
+    if (document.getElementById('ladder-card')) { ladderDone = true; break; }
+  }
+
+  btn.disabled = false;
+  if (!ladderDone) phase.textContent = 'Sim ended';
+}
 </script>
 </body>
 </html>
