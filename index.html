@@ -1397,7 +1397,7 @@ document.getElementById('ci-input').addEventListener('focus', () => {
 });
 
 // ── SIMULATE ──
-const SIM_PERSONA = `You are playing a user in a coaching conversation. Stay in character as this persona: male, mid-20s, software developer, $40k salary, wants to make $5k/month outside work, building an AI coaching tool. Wakes up between 12pm and 2pm, works on the project late at night, reaches for YouTube when work gets hard or confusing. Recently had a work trip to China where he felt locked in — woke up early, structured days, felt like a businessman. Goes to the gym 1-2x a week inconsistently. Messy room. Watches porn occasionally. Friends aren't very ambitious. Wants to dress better, wake earlier, build muscle. Give realistic answers — some vague, some specific. Make the coach work for deeper answers. Respond in 1-3 sentences only. Never break character.`;
+const SIM_PERSONA = `You are simulating a real person in a coaching conversation. Answer ONLY the last question the coach asked. Never ask questions yourself. Never continue the coach's thought. Give short, slightly guarded answers — 1-2 sentences max. Don't be dramatic or overly self-aware. Sound like a real person texting, not writing a journal entry. Stay in character as: male, mid-20s, software job, building an AI tool, wakes up late, YouTube when things get hard, China trip was a peak moment, wants 5k/mo, gym inconsistent, messy room.`;
 
 async function runSimulation() {
   const btn = document.getElementById('simulate-btn');
@@ -1444,7 +1444,12 @@ async function runSimulation() {
     const lastCoach = bubbles[bubbles.length - 1]?.textContent || '';
     if (!lastCoach) break;
 
-    await new Promise(r => setTimeout(r, 600));
+    // Wait for coach message to fully render before generating user response
+    await new Promise(r => {
+      const check = () => loading ? setTimeout(check, 100) : r();
+      check();
+    });
+    await new Promise(r => setTimeout(r, 300));
 
     // Generate user response
     try {
