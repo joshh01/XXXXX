@@ -1507,6 +1507,21 @@ async function runSimulation() {
   await getCoachResponse(null); // null triggers the fallback opening in getCoachResponse
   isWaitingForUser = false;
 
+  // Helper: count coach bubbles in DOM
+  function coachBubbleCount() {
+    return document.querySelectorAll('#messages .msg.coach .bubble').length;
+  }
+
+  // Helper: wait until a new coach bubble appears (with timeout)
+  async function waitForNewCoachMessage(prevCount, timeoutMs = 45000) {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      if (coachBubbleCount() > prevCount) return true;
+      await new Promise(r => setTimeout(r, 200));
+    }
+    return false; // timed out
+  }
+
   while (!ladderDone && turns < MAX_TURNS) {
     turns++;
 
@@ -1516,33 +1531,26 @@ async function runSimulation() {
     // Check if ladder prompt button is showing — auto-click it
     const ladderPromptBtn = document.querySelector('.ladder-prompt-btn');
     if (ladderPromptBtn) {
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, 1000));
       ladderPromptBtn.click();
-      await new Promise(r => setTimeout(r, 1500));
+      await new Promise(r => setTimeout(r, 2000));
       continue;
     }
 
-    // Get last coach message to feed to user persona
-    const msgs = document.getElementById('messages');
-    const bubbles = msgs.querySelectorAll('.msg.coach .bubble');
+    // Get last coach message
+    const bubbles = document.querySelectorAll('#messages .msg.coach .bubble');
     const lastCoach = bubbles[bubbles.length - 1]?.textContent || '';
     if (!lastCoach) break;
 
-    // Wait for coach message to fully render before generating user response
-    await new Promise(r => {
-      const check = () => (loading || isWaitingForUser) ? setTimeout(check, 100) : r();
-      check();
-    });
-    await new Promise(r => setTimeout(r, 300));
-
-    // Generate user response
-    // Detect commit sequence — inject stricter instruction if coach is asking for a commitment
+    // Detect commit sequence
     const commitKeywords = ['tomorrow', 'commit', 'specific thing', 'what time'];
     const isCommitPrompt = commitKeywords.some(kw => lastCoach.toLowerCase().includes(kw));
     const commitInstruction = isCommitPrompt
       ? ' IMPORTANT: The coach is asking for a commitment. Respond with a short first-person answer only — a time and an action. Example: "10am, I\'ll build the first screen." Never a question. Never a coach prompt.'
       : '';
 
+    // Generate user bot response
+    let userText = '';
     try {
       const userRes = await fetch('https://5-x.vercel.app/api/proxy', {
         method: 'POST',
@@ -1556,16 +1564,27 @@ async function runSimulation() {
       });
       const userData = await userRes.json();
       if (userData.error) break;
-      const userText = userData.content[0].text.trim();
-
-      appendMessage('user', userText);
-      exchangeCount++;
-      isWaitingForUser = true;
-      await getCoachResponse(userText);
-      isWaitingForUser = false;
-      await new Promise(r => setTimeout(r, 5000));
-
+      userText = userData.content[0].text.trim();
     } catch(e) { break; }
+
+    if (!userText) break;
+
+    // Add delay before user responds (realistic pacing)
+    await new Promise(r => setTimeout(r, 2000));
+
+    // Append user message and fire coach response
+    appendMessage('user', userText);
+    exchangeCount++;
+
+    const prevCount = coachBubbleCount();
+    await getCoachResponse(userText);
+
+    // Wait until coach actually responds (new bubble in DOM) before next turn
+    const gotResponse = await waitForNewCoachMessage(prevCount, 45000);
+    if (!gotResponse) break; // timeout — end simulation
+
+    // Pacing delay between turns
+    await new Promise(r => setTimeout(r, 3000));
 
     // Check again after coach responds
     if (document.getElementById('ladder-card')) { ladderDone = true; break; }
