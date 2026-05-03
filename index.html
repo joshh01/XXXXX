@@ -892,7 +892,8 @@ function processReply(text, responseMs, isDeep) {
 let lastUserMessage = null;
 
 async function getCoachResponse(userMessage = null, isRetry = false) {
-  if (isSimulating && userMessage !== null && !isRetry && userMessage !== 'Begin the onboarding.') return;
+  // Block in-flight real user requests during simulation, but allow coach-initiated calls (userMessage === null)
+  if (isSimulating && userMessage !== null && !isRetry) return;
   if (userMessage) {
     lastUserMessage = userMessage;
     history.push({ role: 'user', content: userMessage });
@@ -1473,12 +1474,24 @@ async function runSimulation() {
   btn.disabled = true;
   phase.textContent = 'Simulating...';
 
-  // Clear and reset
+  // Dismiss intro screen if showing
+  const introScreen = document.getElementById('intro-screen');
+  if (introScreen) introScreen.style.display = 'none';
+
+  // Enable input
+  document.getElementById('input').disabled = false;
+  document.getElementById('send-btn').disabled = false;
+  const hint = document.getElementById('hint');
+  if (hint) hint.textContent = 'Enter to send · Shift+Enter for new line';
+
+  // Clear and reset — must happen AFTER isSimulating = true to block any in-flight requests
   history = []; started = false; exchangeCount = 0;
   lastUserMessage = null; lastDeepExchange = -10; deepCount = 0;
   document.getElementById('messages').innerHTML = '';
   document.getElementById('input').value = '';
   document.getElementById('input').style.height = 'auto';
+  document.getElementById('empty-state')?.remove();
+
   // Re-disable check-in tab
   const ciTab = document.getElementById('tab-ci');
   ciTab.disabled = true; ciTab.classList.remove('unlocked');
@@ -1489,9 +1502,9 @@ async function runSimulation() {
   const MAX_TURNS = 40;
   let isWaitingForUser = false;
 
-  // Get first coach message — pass opening as explicit argument so it goes through the normal path
+  // Fire ONE opening message directly — do not call startConversation (would double-fire)
   isWaitingForUser = true;
-  await getCoachResponse('Begin the onboarding.');
+  await getCoachResponse(null); // null triggers the fallback opening in getCoachResponse
   isWaitingForUser = false;
 
   while (!ladderDone && turns < MAX_TURNS) {
