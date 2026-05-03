@@ -892,7 +892,7 @@ function processReply(text, responseMs, isDeep) {
 let lastUserMessage = null;
 
 async function getCoachResponse(userMessage = null, isRetry = false) {
-  if (isSimulating && userMessage !== null && !isRetry) return;
+  if (isSimulating && userMessage !== null && !isRetry && userMessage !== 'Begin the onboarding.') return;
   if (userMessage) {
     lastUserMessage = userMessage;
     history.push({ role: 'user', content: userMessage });
