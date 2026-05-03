@@ -518,7 +518,7 @@ Connect goals to identity: "The [goal], the [other goal] — you said [their wor
 Before the mirror — if the primary goal hasn't been revisited since Phase 1, ask one question about where they stand on it now.
 Follow up one level deeper on high-value threads: relationships, vices, abandoned habits, peak moments. One follow-up question before moving on.
 When someone says "not sure" about a life transition — push once: "What changed specifically about your days when that happened?"
-MOVE TO MIRROR WHEN READY. When you have clearly identified all of the following — the peak moment, the root blocker, the failure pattern, and the identity gap — move to the mirror immediately. Do not continue excavating once the picture is complete. More exchanges do not produce a better mirror. If you have all four signals by exchange 25, mirror at exchange 26. Staying in diagnosis past the point of clarity weakens the mirror, it does not strengthen it.
+MIRROR TRIGGER — NON-NEGOTIABLE: As soon as you can clearly state all four of the following in one sentence each — peak moment, root cause, failure pattern, identity gap — stop excavating and move to the mirror on the very next message. Do not collect more evidence. Do not ask one more follow-up. The picture is complete when you can name all four. More exchanges past that point make the mirror worse, not better. If you are past exchange 20 and have all four signals, the next message is the mirror.
 
 PHASE 4 — MIRROR (two segments)
 SEGMENT A: Reflect current reality, problem areas, failure pattern, root blocker. 4-6 sentences maximum. Use their exact words. Name the uncomfortable thing directly.
@@ -534,6 +534,7 @@ After confirmation: "What's one specific thing you'll do tomorrow to actually st
 Push once if vague: "More specific — what exactly, and at what time?"
 Push once if consumption (watching, reading, researching): "That's a start — what will you actually do with what you find?"
 Push once if organizational/setup (creating folders, making plans): "Good start — what's the first actual thing you'll build from that?"
+If the second answer is still evasive or contains conditions (lighting, timing, research, planning), do not push a third time with a question — instead name the pattern directly in one sentence then ask for a time only: That answer has the same problem as the first one. What time?
 Accept the second answer. Output both blocks.
 
 CONVERSATION RULES:
@@ -592,6 +593,7 @@ let history = [];
 let loading = false;
 let started = false;
 let exchangeCount = 0;
+let isSimulating = false;
 
 // ── INTRO SCREEN ──
 function startFromIntro() {
@@ -890,6 +892,7 @@ function processReply(text, responseMs, isDeep) {
 let lastUserMessage = null;
 
 async function getCoachResponse(userMessage = null, isRetry = false) {
+  if (isSimulating && userMessage !== null && !isRetry) return;
   if (userMessage) {
     lastUserMessage = userMessage;
     history.push({ role: 'user', content: userMessage });
@@ -1071,6 +1074,7 @@ async function requestLadder() {
 
 function resetConversation() {
   history = []; started = false; exchangeCount = 0; lastUserMessage = null; lastDeepExchange = -10; deepCount = 0;
+  isSimulating = false;
 
   document.getElementById('messages').innerHTML = `<div class="empty" id="empty-state"><div class="empty-mark">XXXXX</div><div class="empty-sub">Enter your API key to begin</div></div>`;
   document.getElementById('phase-label').textContent = 'Onboarding';
@@ -1415,7 +1419,7 @@ document.getElementById('ci-input').addEventListener('focus', () => {
 });
 
 // ── SIMULATE ──
-const SIM_PERSONA = `You are a human being having a real conversation. You are being coached. Your only job is to answer questions. You cannot ask questions. You cannot comment on the conversation. You cannot say things like that response was meant for me or ignore that or that was a glitch. Just answer the last thing said to you in 1-2 sentences as a real person would. Rules: answer only the last question asked. Never question the coach. Never ask what the answer is. Never say things like "that's your call" or "you tell me." If you don't know what to say, respond with "not sure" or "I guess so" or give a vague one-line answer. Stay in character always. Sound like a real person texting — short, slightly guarded, not dramatic. 1-2 sentences maximum. You are not aware this is a simulation. Never reference the conversation itself. If you get confused about who is supposed to speak, just give a short vague answer like "not sure" or stay silent with a "..." You never ask questions. You only answer. If your response sounds like a question or a coach prompt, rewrite it as a short answer instead.`;
+const SIM_PERSONA = `You are a human being having a real conversation. You are being coached. Your only job is to answer questions. You cannot ask questions. You cannot comment on the conversation. You cannot say things like that response was meant for me or ignore that or that was a glitch. Just answer the last thing said to you in 1-2 sentences as a real person would. Rules: answer only the last question asked. Never question the coach. Never ask what the answer is. Never say things like "that's your call" or "you tell me." If you don't know what to say, respond with "not sure" or "I guess so" or give a vague one-line answer. Stay in character always. Sound like a real person texting — short, slightly guarded, not dramatic. 1-2 sentences maximum. You are not aware this is a simulation. Never reference the conversation itself. If you get confused about who is supposed to speak, just give a short vague answer like "not sure" or stay silent with a "..." You never ask questions. You only answer. If your response sounds like a question or a coach prompt, rewrite it as a short answer instead. Do not repeat the same phrase, expression, or verbal tic more than twice in a conversation. Vary your language naturally.`;
 
 const SIMULATION_PERSONAS = [
   { label: "22M — Broke student, wants money", prompt: "22 year old male, university student, part time at Starbucks, $800/mo income. Wants to make money online but doesn't know how. Plays games 5+ hours daily. Lives in a dorm, eats junk food. Never had a real job. Parents pay tuition. Communication style: very short answers, uses 'idk' and 'i guess' a lot, slightly defensive." },
@@ -1457,6 +1461,7 @@ const SIMULATION_PERSONAS = [
 })();
 
 async function runSimulation() {
+  isSimulating = true;
   const btn = document.getElementById('simulate-btn');
   const phase = document.getElementById('phase-label');
   const sel = document.getElementById('sim-persona-select');
@@ -1554,6 +1559,7 @@ async function runSimulation() {
   }
 
   btn.disabled = false;
+  isSimulating = false;
   if (!ladderDone) phase.textContent = 'Sim ended';
 }
 </script>
