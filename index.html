@@ -892,8 +892,7 @@ function processReply(text, responseMs, isDeep) {
 let lastUserMessage = null;
 
 async function getCoachResponse(userMessage = null, isRetry = false) {
-  // Block in-flight real user requests during simulation, but allow coach-initiated calls (userMessage === null)
-  if (isSimulating && userMessage !== null && !isRetry) return;
+  // isSimulating flag is handled at send() level — no guard needed here
   if (userMessage) {
     lastUserMessage = userMessage;
     history.push({ role: 'user', content: userMessage });
@@ -962,7 +961,7 @@ async function getCoachResponse(userMessage = null, isRetry = false) {
 async function send() {
   const input = document.getElementById('input');
   const text = input.value.trim();
-  if (!text || loading) return;
+  if (!text || loading || isSimulating) return;
   input.value = ''; input.style.height = 'auto';
   appendMessage('user', text);
   exchangeCount++;
